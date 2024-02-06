@@ -1,11 +1,87 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { api } from "~/utils/api";
+import { AuthContext } from "./_app";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
+
+  const { accessToken, baseUrl } = useContext(AuthContext);
+
+  const { data: animalQuery } = useQuery({
+    queryKey: ["getAllDogs"],
+    queryFn: () => getAllAnimals(accessToken, baseUrl),
+    enabled: !!accessToken,
+  });
+
+  const getAllAnimals = async (accessToken: string | null, baseUrl: string) => {
+    if (accessToken === null) return;
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(`${baseUrl}/animals?limit=100`, config);
+
+      console.log("response", response);
+
+      return response;
+    } catch (e) {
+      console.error(e);
+      throw new Error();
+    }
+  };
+
+  type Photo = {
+    full?: string;
+    large?: string;
+    medium?: string;
+    small?: string;
+  };
+
+  type Dog = {
+    name: string;
+    age: "Adult" | "Baby" | "Young" | "Senior";
+    id: number;
+    breed: string;
+    gender: "Male" | "Female";
+    photo: Photo[];
+  };
+
+  const [dogs, setDogs] = useState<Dog[]>([])
+
+  useEffect(() => {
+    if (animalQuery) {
+      console.log("animalQuery", animalQuery);
+      const filteredDogs: Dog[] = animalQuery.data.animals
+        .filter((animal) => animal.species === "Dog")
+        .map(
+          (dog) =>
+            (dog = {
+              name: dog.name,
+              age: dog.age,
+              id: dog.id,
+              breed: dog.breeds.primary,
+              gender: dog.gender,
+              photo: dog.photos,
+            }),
+        );
+        setDogs(filteredDogs)
+
+      console.log("dogs", dogs);
+    }
+  }, [animalQuery]);
+  // console.log("arrOfDogs", arrOfDogs);
 
   return (
     <>
@@ -60,7 +136,7 @@ function AuthShowcase() {
 
   const { data: secretMessage } = api.post.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined }
+    { enabled: sessionData?.user !== undefined },
   );
 
   return (
