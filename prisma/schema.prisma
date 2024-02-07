@@ -26,6 +26,26 @@ model Post {
     @@index([name])
 }
 
+model Photo {
+    id     String  @id @default(cuid())
+    full   String?
+    large  String?
+    medium String?
+    small  String?
+    // Dog    Dog?    @relation(fields: [dogId], references: [id])
+    // dogId  Int?
+}
+
+model Dog {
+    id     Int  @id @unique
+    name   String
+    age    String
+    breed  String
+    gender String
+    // photos Photo[]
+    photo  String?
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())

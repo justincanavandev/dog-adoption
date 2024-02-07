@@ -12,6 +12,9 @@ import { api } from "~/utils/api";
 import { AuthContext } from "./_app";
 
 export default function Home() {
+  // petfinder API set up
+  // https://www.youtube.com/watch?v=RCg1KKs8v9I
+
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
   const { accessToken, baseUrl } = useContext(AuthContext);
@@ -46,19 +49,24 @@ export default function Home() {
     full?: string;
     large?: string;
     medium?: string;
-    small?: string;
+    small: string;
+    dogId?: number;
   };
 
   type Dog = {
+    id: number;
     name: string;
     age: "Adult" | "Baby" | "Young" | "Senior";
-    id: number;
     breed: string;
     gender: "Male" | "Female";
-    photo: Photo[];
+    // photos: Photo[] | []
+
+    photo: string | null;
   };
 
-  const [dogs, setDogs] = useState<Dog[]>([])
+  const { mutate: addManyDogs } = api.dog.createMany.useMutation({});
+
+  const [dogs, setDogs] = useState<Dog[]>([]);
 
   useEffect(() => {
     if (animalQuery) {
@@ -73,12 +81,17 @@ export default function Home() {
               id: dog.id,
               breed: dog.breeds.primary,
               gender: dog.gender,
-              photo: dog.photos,
+              photo:
+                dog.photos.length > 0
+                  ? dog.photos[0].medium
+                    ? dog.photos[0].medium
+                    : null
+                  : null,
             }),
         );
-        setDogs(filteredDogs)
+      setDogs(filteredDogs);
 
-      console.log("dogs", dogs);
+      console.log("filteredDogs", filteredDogs);
     }
   }, [animalQuery]);
   // console.log("arrOfDogs", arrOfDogs);
@@ -92,6 +105,7 @@ export default function Home() {
       </Head>
       <main className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+          <button onClick={() => addManyDogs(dogs)}>Add Dogs</button>
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
           </h1>
