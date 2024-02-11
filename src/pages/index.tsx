@@ -10,6 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import { api } from "~/utils/api";
 import { AuthContext } from "./_app";
+import type { Photo } from "@prisma/client";
+// import { Photos } from "@prisma/client";
 
 export default function Home() {
   // petfinder API set up
@@ -36,7 +38,7 @@ export default function Home() {
       };
       const response = await axios.get(`${baseUrl}/animals?limit=100`, config);
 
-      console.log("response", response);
+      // console.log("response", response);
 
       return response;
     } catch (e) {
@@ -45,13 +47,14 @@ export default function Home() {
     }
   };
 
-  type Photo = {
-    full?: string;
-    large?: string;
-    medium?: string;
-    small: string;
-    dogId?: number;
-  };
+  // type Photo = {
+  //   id: string;
+  //   full: string
+  //   large: string
+  //   medium: string
+  //   small: string
+  //   dogId: number;
+  // };
 
   type Dog = {
     id: number;
@@ -59,12 +62,10 @@ export default function Home() {
     age: "Adult" | "Baby" | "Young" | "Senior";
     breed: string;
     gender: "Male" | "Female";
-    // photos: Photo[] | []
-
-    photo: string | null;
+    photos: Photo[];
   };
 
-  const { mutate: addManyDogs } = api.dog.createMany.useMutation({});
+  const { mutate: addOneDog } = api.dog.createOne.useMutation({});
 
   const [dogs, setDogs] = useState<Dog[]>([]);
 
@@ -72,7 +73,9 @@ export default function Home() {
     if (animalQuery) {
       console.log("animalQuery", animalQuery);
       const filteredDogs: Dog[] = animalQuery.data.animals
-        .filter((animal) => animal.species === "Dog")
+        .filter(
+          (animal) => animal.species === "Dog" && animal.photos.length > 0,
+        )
         .map(
           (dog) =>
             (dog = {
@@ -81,20 +84,34 @@ export default function Home() {
               id: dog.id,
               breed: dog.breeds.primary,
               gender: dog.gender,
-              photo:
-                dog.photos.length > 0
-                  ? dog.photos[0].medium
-                    ? dog.photos[0].medium
-                    : null
-                  : null,
+              photos: dog.photos.map((photo: Photo) => {
+                return {
+                  ...photo,
+                  id: "ckgqha4yg0000i6lkb78sl27k",
+                  dogId: dog.id,
+                };
+              }),
+              address: {
+                address1: dog.contact.address.address1,
+                address2: dog.contact.address.address2,
+                city: dog.contact.address.city,
+                state: dog.contact.address.state,
+                zipCode: dog.contact.address.postcode,
+                dogId: dog.id,
+              },
             }),
+            
         );
+        console.log('filteredDogs', filteredDogs)
       setDogs(filteredDogs);
-
-      console.log("filteredDogs", filteredDogs);
     }
   }, [animalQuery]);
-  // console.log("arrOfDogs", arrOfDogs);
+  console.log("dogs", dogs);
+
+  const addAllDogs = () => {
+    console.log("dogs", dogs);
+    dogs.map((dog) => addOneDog(dog));
+  };
 
   return (
     <>
@@ -105,7 +122,7 @@ export default function Home() {
       </Head>
       <main className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <button onClick={() => addManyDogs(dogs)}>Add Dogs</button>
+          <button onClick={() => addAllDogs()}>Add Dog</button>
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
           </h1>

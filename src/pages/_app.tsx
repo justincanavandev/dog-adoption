@@ -9,12 +9,12 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { createContext, useState, useEffect } from "react";
 
-type AuthContextType = {
+export type AuthContextType = {
   accessToken: string | null;
   baseUrl: string;
 };
 
-type AuthOResponse = {
+export type AuthOResponse = {
   access_token: string | null;
   token_type: string;
   expires_in: number;

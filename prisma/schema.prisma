@@ -1,64 +1,67 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
     provider = "postgresql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
+    id          Int      @id @default(autoincrement())
+    name        String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
     createdById String
+    createdBy   User     @relation(fields: [createdById], references: [id])
 
     @@index([name])
 }
 
+model Address {
+    address1 String?
+    address2 String?
+    city     String?
+    zipCode  String?
+    state    String?
+    Dog      Dog?    @relation(fields: [dogId], references: [id])
+    dogId    Int     @unique
+}
+
 model Photo {
-    id     String  @id @default(cuid())
-    full   String?
-    large  String?
-    medium String?
-    small  String?
-    // Dog    Dog?    @relation(fields: [dogId], references: [id])
-    // dogId  Int?
+    id     String @id @default(cuid())
+    full   String
+    large  String
+    medium String
+    small  String
+    dogId  Int
+    Dog Dog? @relation(fields: [dogId], references: [id])
 }
 
 model Dog {
-    id     Int  @id @unique
-    name   String
-    age    String
-    breed  String
-    gender String
-    // photos Photo[]
-    photo  String?
+    name    String
+    age     String
+    breed   String
+    gender  String
+    id      Int      @id @unique
+    photos  Photo[]
+    address Address?
+
+    // addressId String
 }
 
-// Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
     userId            String
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String?
+    access_token      String?
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String?
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -80,8 +83,8 @@ model User {
     emailVerified DateTime?
     image         String?
     accounts      Account[]
-    sessions      Session[]
     posts         Post[]
+    sessions      Session[]
 }
 
 model VerificationToken {
