@@ -17,6 +17,9 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    domains: ['dl5zpyw5k3jeb.cloudfront.net'],
+  },
 };
 
 export default config;

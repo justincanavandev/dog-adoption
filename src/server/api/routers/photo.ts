@@ -15,7 +15,6 @@ export const photosRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("input", input);
       try {
         const photos = await ctx.db.photo.create({
           data: {

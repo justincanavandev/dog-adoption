@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
@@ -7,27 +11,20 @@ import type { AxiosResponse } from "axios";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-import { createContext, useState, useEffect } from "react";
-
-export type AuthContextType = {
-  accessToken: string | null;
-  baseUrl: string;
-};
-
-export type AuthOResponse = {
-  access_token: string | null;
-  token_type: string;
-  expires_in: number;
-};
-
-export const AuthContext = createContext({} as AuthContextType);
+import { useState, useEffect, useContext } from "react";
+import type { AuthOResponse } from "~/types/auth-types";
+import { AuthContext } from "~/context/api-auth-context";
+import { useQuery } from "@tanstack/react-query";
+import type { Dog } from "~/types/dog-types";
+import type { Photo } from "@prisma/client";
+import { DogContext } from "~/context/dog-context";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const baseUrl = "https://api.petfinder.com/v2";
+  const API_BASE_URL = "https://api.petfinder.com/v2";
 
   useEffect(() => {
     const fetchAccessToken: () => Promise<void> = async () => {
@@ -45,10 +42,75 @@ const MyApp: AppType<{ session: Session | null }> = ({
     void fetchAccessToken();
   }, []);
 
+  const [dogs, setDogs] = useState<Dog[]>([]);
+  const { data: animalQuery } = useQuery({
+    queryKey: ["getAllDogs"],
+    queryFn: () => getAllAnimals(accessToken, API_BASE_URL),
+    enabled: !!accessToken,
+  });
+
+  const getAllAnimals = async (accessToken: string | null, baseUrl: string) => {
+    if (accessToken === null) return;
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(`${baseUrl}/animals?limit=100`, config);
+
+      return response;
+    } catch (e) {
+      console.error(e);
+      throw new Error();
+    }
+  };
+
+  useEffect(() => {
+    if (animalQuery) {
+      console.log("animalQuery", animalQuery);
+      const filteredDogs: Dog[] = animalQuery.data.animals
+        .filter(
+          (animal) => animal.species === "Dog" && animal.photos.length > 0,
+        )
+        .map(
+          (dog) =>
+            (dog = {
+              name: dog.name,
+              age: dog.age,
+              id: dog.id,
+              breed: dog.breeds.primary,
+              gender: dog.gender,
+              photos: dog.photos.map((photo: Photo) => {
+                return {
+                  ...photo,
+                  id: "ckgqha4yg0000i6lkb78sl27k",
+                  dogId: dog.id,
+                };
+              }),
+              address: {
+                address1: dog.contact.address.address1,
+                address2: dog.contact.address.address2,
+                city: dog.contact.address.city,
+                state: dog.contact.address.state,
+                zipCode: dog.contact.address.postcode,
+                dogId: dog.id,
+              },
+            }),
+        );
+      console.log("filteredDogs", filteredDogs);
+      setDogs(filteredDogs);
+    }
+  }, [animalQuery]);
+  console.log("dogs", dogs);
+
   return (
     <SessionProvider session={session}>
-      <AuthContext.Provider value={{ accessToken, baseUrl }}>
-        <Component {...pageProps} />
+      <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
+        <DogContext.Provider value={{ dogs, setDogs }}>
+          <Component {...pageProps} />
+        </DogContext.Provider>
       </AuthContext.Provider>
     </SessionProvider>
   );

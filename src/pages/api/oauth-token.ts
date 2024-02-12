@@ -18,7 +18,6 @@ const ZeroAuth = async (req, res) => {
         // },
       },
     );
-    console.log('petfinderRes', petfinderRes)
     const data = await petfinderRes.json();
     res.send(data);
   } catch (e) {

@@ -18,14 +18,15 @@ model Post {
     @@index([name])
 }
 
-model Address {
-    address1 String?
-    address2 String?
-    city     String?
-    zipCode  String?
-    state    String?
-    Dog      Dog?    @relation(fields: [dogId], references: [id])
-    dogId    Int     @unique
+
+model Dog {
+    id     Int    @id @unique
+    name   String
+    age    String
+    breed  String
+    gender String
+    photos  Photo[]
+    address Address?
 }
 
 model Photo {
@@ -35,19 +36,17 @@ model Photo {
     medium String
     small  String
     dogId  Int
-    Dog Dog? @relation(fields: [dogId], references: [id])
+    Dog    Dog  @relation(fields: [dogId], references: [id])
 }
 
-model Dog {
-    name    String
-    age     String
-    breed   String
-    gender  String
-    id      Int      @id @unique
-    photos  Photo[]
-    address Address?
-
-    // addressId String
+model Address {
+    address1 String?
+    address2 String?
+    city     String?
+    zipCode  String?
+    state    String?
+    Dog      Dog    @relation(fields: [dogId], references: [id])
+    dogId    Int     @unique
 }
 
 model Account {

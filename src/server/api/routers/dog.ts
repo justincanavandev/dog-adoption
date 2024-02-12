@@ -60,7 +60,6 @@ export const dogRouter = createTRPCRouter({
           })
           .array(),
         address: z.object({
-          // id: z.string().cuid(),
           address1: z.string().nullable(),
           address2: z.string().nullable(),
           city: z.string().nullable(),
@@ -95,7 +94,6 @@ export const dogRouter = createTRPCRouter({
                 city: input.address.city,
                 zipCode: input.address.zipCode,
                 state: input.address.state,
-                // dogId: input.dogId
               },
             },
           },
