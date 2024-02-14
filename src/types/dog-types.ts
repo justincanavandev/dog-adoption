@@ -7,7 +7,7 @@ export type Dog = {
   gender: string;
   id: number;
   photos: Photo[];
-  address: Address;
+  address?: Address;
 };
 
 

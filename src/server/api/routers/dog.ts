@@ -7,40 +7,20 @@ import {
 } from "~/server/api/trpc";
 
 export const dogRouter = createTRPCRouter({
-  // createMany: protectedProcedure
-  //   .input(
-  //     z
-  //       .object({
-  //         id: z.number(),
-  //         name: z.string().min(1),
-  //         age: z.string().min(1),
-  //         breed: z.string().min(1),
-  //         gender: z.string().min(1),
-  //         photos: z
-  //           .object({
-  //             id: z.number(),
-  //             full: z.string().nullable(),
-  //             large: z.string().nullable(),
-  //             medium: z.string().nullable(),
-  //             small: z.string().nullable(),
-  //             dogId: z.number(),
-  //           })
-  //           .array(),
-  //       })
-  //       .array(),
-  //   )
-  //   .mutation(async ({ ctx, input }) => {
-  //     try {
-  //       console.log("input", input);
-  //       const dogs = await ctx.db.dog.createMany({
-  //         data: input,
-  //       });
-  //       console.log("dogs", dogs);
-  //       return dogs;
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   }),
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const dogs = await ctx.db.dog.findMany({
+        include: {
+          photos: true,
+          address: true,
+        },
+      });
+      console.log("dogs", dogs);
+      return dogs;
+    } catch (e) {
+      console.error("Dogs unable to be fetched", e);
+    }
+  }),
   createOne: protectedProcedure
     .input(
       z.object({

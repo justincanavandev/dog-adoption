@@ -7,17 +7,18 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import axios from "axios";
 import type { AxiosResponse } from "axios";
-
+import Spinner from "~/components/Spinner";
 import { api } from "~/utils/api";
-
 import "~/styles/globals.css";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import type { AuthOResponse } from "~/types/auth-types";
-import { AuthContext } from "~/context/api-auth-context";
-import { useQuery } from "@tanstack/react-query";
+import { AuthContext } from "~/context/APIAuthContext";
+// import { useQuery } from "@tanstack/react-query";
 import type { Dog } from "~/types/dog-types";
-import type { Photo } from "@prisma/client";
-import { DogContext } from "~/context/dog-context";
+// import type { Photo } from "@prisma/client";
+import { DogContext } from "~/context/DogContext";
+import { roboto } from "~/styles/fonts";
+import Layout from "~/components/layout/Layout";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -43,75 +44,104 @@ const MyApp: AppType<{ session: Session | null }> = ({
   }, []);
 
   const [dogs, setDogs] = useState<Dog[]>([]);
-  const { data: animalQuery } = useQuery({
-    queryKey: ["getAllDogs"],
-    queryFn: () => getAllAnimals(accessToken, API_BASE_URL),
-    enabled: !!accessToken,
-  });
+  const {
+    data: allDogs,
+    isLoading: isDogsLoading,
+    isSuccess: isDogsSuccess,
+    isError: isDogsError,
+  } = api.dog.getAll.useQuery();
+  // const { data: animalQuery } = useQuery({
+  //   queryKey: ["getAllDogs"],
+  //   queryFn: () => getAllAnimals(accessToken, API_BASE_URL),
+  //   enabled: !!accessToken,
+  // });
 
-  const getAllAnimals = async (accessToken: string | null, baseUrl: string) => {
-    if (accessToken === null) return;
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      const response = await axios.get(`${baseUrl}/animals?limit=100`, config);
+  // const getAllAnimals = async (accessToken: string | null, baseUrl: string) => {
+  //   if (accessToken === null) return;
+  //   try {
+  //     const config = {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     };
+  //     const response = await axios.get(`${baseUrl}/animals?limit=100`, config);
 
-      return response;
-    } catch (e) {
-      console.error(e);
-      throw new Error();
-    }
-  };
+  //     return response;
+  //   } catch (e) {
+  //     console.error(e);
+  //     throw new Error();
+  //   }
+  // };
 
-  useEffect(() => {
-    if (animalQuery) {
-      console.log("animalQuery", animalQuery);
-      const filteredDogs: Dog[] = animalQuery.data.animals
-        .filter(
-          (animal) => animal.species === "Dog" && animal.photos.length > 0,
-        )
-        .map(
-          (dog) =>
-            (dog = {
-              name: dog.name,
-              age: dog.age,
-              id: dog.id,
-              breed: dog.breeds.primary,
-              gender: dog.gender,
-              photos: dog.photos.map((photo: Photo) => {
-                return {
-                  ...photo,
-                  id: "ckgqha4yg0000i6lkb78sl27k",
-                  dogId: dog.id,
-                };
-              }),
-              address: {
-                address1: dog.contact.address.address1,
-                address2: dog.contact.address.address2,
-                city: dog.contact.address.city,
-                state: dog.contact.address.state,
-                zipCode: dog.contact.address.postcode,
-                dogId: dog.id,
-              },
-            }),
-        );
-      console.log("filteredDogs", filteredDogs);
-      setDogs(filteredDogs);
-    }
-  }, [animalQuery]);
+  // useEffect(() => {
+  //   if (animalQuery) {
+  //     console.log("animalQuery", animalQuery);
+  //     const filteredDogs: Dog[] = animalQuery.data.animals
+  //       .filter(
+  //         (animal) => animal.species === "Dog" && animal.photos.length > 0,
+  //       )
+  //       .map(
+  //         (dog) =>
+  //           (dog = {
+  //             name: dog.name,
+  //             age: dog.age,
+  //             id: dog.id,
+  //             breed: dog.breeds.primary,
+  //             gender: dog.gender,
+  //             photos: dog.photos.map((photo: Photo) => {
+  //               return {
+  //                 ...photo,
+  //                 id: "ckgqha4yg0000i6lkb78sl27k",
+  //                 dogId: dog.id,
+  //               };
+  //             }),
+  //             address: {
+  //               address1: dog.contact.address.address1,
+  //               address2: dog.contact.address.address2,
+  //               city: dog.contact.address.city,
+  //               state: dog.contact.address.state,
+  //               zipCode: dog.contact.address.postcode,
+  //               dogId: dog.id,
+  //             },
+  //           }),
+  //       );
+  //     console.log("filteredDogs", filteredDogs);
+  //     setDogs(filteredDogs);
+  //   }
+  // }, [animalQuery]);
   console.log("dogs", dogs);
+  useEffect(() => {
+    if (isDogsSuccess && !isDogsLoading && dogs) {
+      if (allDogs) {
+        setDogs(allDogs);
+      }
+    }
+  }, [isDogsSuccess, isDogsLoading, allDogs, dogs]);
 
   return (
     <SessionProvider session={session}>
-      <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
-        <DogContext.Provider value={{ dogs, setDogs }}>
-          <Component {...pageProps} />
-        </DogContext.Provider>
-      </AuthContext.Provider>
+      <Layout>
+        <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
+          {isDogsLoading && <Spinner />}
+          {/* {isDogsSuccess && !isDogsLoading && dogs && ( */}
+          <DogContext.Provider
+            value={{
+              dogs,
+              setDogs,
+              allDogs,
+              isDogsLoading,
+              isDogsSuccess,
+              isDogsError,
+            }}
+          >
+            <main className={`${roboto.className}`}>
+              {/* Component is just whatever the current component is */}
+              <Component {...pageProps} />
+            </main>
+          </DogContext.Provider>
+        </AuthContext.Provider>
+      </Layout>
     </SessionProvider>
   );
 };
