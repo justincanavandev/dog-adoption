@@ -1,11 +1,13 @@
 import { createContext } from "react";
-import type { Dog } from "~/types/dog-types";
+// import type { Dog } from "@prisma/client";
+import type { DogWithRelations } from "~/types/dog-types";
 import type { SetStateAction } from "react";
+// import { Dog } from "@prisma/client";
 
 export type DogContextType = {
-  dogs: Dog[];
-  setDogs: React.Dispatch<SetStateAction<Dog[]>>;
-  allDogs: Dog[] | undefined,
+  dogs: DogWithRelations[];
+  setDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
+  allDogs: DogWithRelations[] | undefined,
   isDogsLoading: boolean,
   isDogsSuccess: boolean,
   isDogsError: boolean

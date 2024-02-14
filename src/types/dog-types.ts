@@ -1,13 +1,9 @@
-import type { Photo, Address } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-export type Dog = {
-  name: string;
-  age: string;
-  breed: string;
-  gender: string;
-  id: number;
-  photos: Photo[];
-  address?: Address;
-};
+const dogWithRelations = Prisma.validator<Prisma.DogDefaultArgs>()({
+  include: { address: true, photos: true },
+});
+
+export type DogWithRelations = Prisma.DogGetPayload<typeof dogWithRelations>
 
 

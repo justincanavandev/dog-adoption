@@ -35,7 +35,7 @@ export default function Home() {
       <main className={`${roboto.className} flex min-h-screen flex-col items-center justify-center`}>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <button onClick={() => addAllDogs()}>Add All Dogs</button>
-          <Link href="/all-dogs">Go to Dogs Page</Link>
+          <Link href="/dogs">Go to Dogs Page</Link>
           <div className="flex flex-col items-center gap-2">
             <AuthShowcase />
           </div>

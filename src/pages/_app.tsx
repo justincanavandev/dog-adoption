@@ -7,16 +7,13 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import axios from "axios";
 import type { AxiosResponse } from "axios";
-import Spinner from "~/components/Spinner";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { useState, useEffect } from "react";
 import type { AuthOResponse } from "~/types/auth-types";
 import { AuthContext } from "~/context/APIAuthContext";
 // import { useQuery } from "@tanstack/react-query";
-import type { Dog } from "~/types/dog-types";
-// import type { Photo } from "@prisma/client";
-import { DogContext } from "~/context/DogContext";
+
 import { roboto } from "~/styles/fonts";
 import Layout from "~/components/layout/Layout";
 
@@ -43,13 +40,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
     void fetchAccessToken();
   }, []);
 
-  const [dogs, setDogs] = useState<Dog[]>([]);
-  const {
-    data: allDogs,
-    isLoading: isDogsLoading,
-    isSuccess: isDogsSuccess,
-    isError: isDogsError,
-  } = api.dog.getAll.useQuery();
+  // const [dogs, setDogs] = useState<Dog[]>([]);
+  // const {
+  //   data: allDogs,
+  //   isLoading: isDogsLoading,
+  //   isSuccess: isDogsSuccess,
+  //   isError: isDogsError,
+  // } = api.dog.getAll.useQuery();
   // const { data: animalQuery } = useQuery({
   //   queryKey: ["getAllDogs"],
   //   queryFn: () => getAllAnimals(accessToken, API_BASE_URL),
@@ -110,22 +107,22 @@ const MyApp: AppType<{ session: Session | null }> = ({
   //     setDogs(filteredDogs);
   //   }
   // }, [animalQuery]);
-  console.log("dogs", dogs);
-  useEffect(() => {
-    if (isDogsSuccess && !isDogsLoading && dogs) {
-      if (allDogs) {
-        setDogs(allDogs);
-      }
-    }
-  }, [isDogsSuccess, isDogsLoading, allDogs, dogs]);
+  // console.log("dogs", dogs);
+  // useEffect(() => {
+  //   if (isDogsSuccess && !isDogsLoading && dogs) {
+  //     if (allDogs) {
+  //       setDogs(allDogs);
+  //     }
+  //   }
+  // }, [isDogsSuccess, isDogsLoading, allDogs, dogs]);
 
   return (
     <SessionProvider session={session}>
       <Layout>
         <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
-          {isDogsLoading && <Spinner />}
+          {/* {isDogsLoading && <Spinner />} */}
           {/* {isDogsSuccess && !isDogsLoading && dogs && ( */}
-          <DogContext.Provider
+          {/* <DogContext.Provider
             value={{
               dogs,
               setDogs,
@@ -134,12 +131,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
               isDogsSuccess,
               isDogsError,
             }}
-          >
-            <main className={`${roboto.className}`}>
-              {/* Component is just whatever the current component is */}
-              <Component {...pageProps} />
-            </main>
-          </DogContext.Provider>
+          > */}
+          <main className={`${roboto.className}`}>
+            {/* Component is just whatever the current component is */}
+            <Component {...pageProps} />
+          </main>
+          {/* </DogContext.Provider> */}
         </AuthContext.Provider>
       </Layout>
     </SessionProvider>
