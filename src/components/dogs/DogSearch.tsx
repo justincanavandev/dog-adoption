@@ -12,7 +12,8 @@ import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
 import Link from "next/link";
 import Head from "next/head";
-import Layout from "../layout/Layout";
+import { capitalizeFirstLetter } from "~/utils/helpers";
+import type { DogWithRelations } from "~/types/dog-types";
 
 const DogSearch = () => {
   //   const {
@@ -33,14 +34,22 @@ const DogSearch = () => {
 
   //   const totalPages = Math.ceil(total / 25)
 
-  const { dogs, allDogs } = useContext(DogContext);
+  const { dogs, allDogs, favoriteDogs, setFavoriteDogs } =
+    useContext(DogContext);
+  // const [favoriteDogs, setFavoriteDogs] = useState({})
 
-  //   const addToFavorites = async (id: string): Promise<void> => {
-  //     await fetchFavoriteDogs([...favoriteDogsIds], id)
-  //     if (!favoriteDogsIds.includes(id)) {
-  //       setFavoriteDogsIds([...favoriteDogsIds, id])
-  //     }
-  //   }
+  const addToFavorites = async (dog: DogWithRelations): Promise<void> => {
+    if (favoriteDogs.includes(dog)) {
+      console.log("You have already favorited this dog!");
+    } else {
+      setFavoriteDogs([...favoriteDogs, dog]);
+    }
+  };
+
+  useEffect(() => {
+    console.log("favoriteDogs", favoriteDogs);
+  }, [favoriteDogs]);
+
   //   const fetchNext = async (nextParams: string): Promise<void> => {
   //     let response: AxiosResponse<any, any> | undefined =
   //       await fetchNextPage(nextParams)
@@ -83,9 +92,9 @@ const DogSearch = () => {
   //       }
   //     }
   //   }
-  useEffect(() => {
-    console.log("dogs", allDogs);
-  }, []);
+  // useEffect(() => {
+  //   console.log("dogs", allDogs);
+  // }, []);
 
   return (
     // <Layout>
@@ -94,9 +103,8 @@ const DogSearch = () => {
         <title>Search for Dogs!</title>
       </Head>
       <div className="flex flex-wrap justify-center gap-4">
-      <Link href="/">Go to Home Page</Link>
+        <Link href="/">Go to Home Page</Link>
         <h2 className="w-full text-center text-[1.5rem]"> View All Dogs!</h2>
-  
 
         {dogs.map((dog, index) => (
           <div
@@ -108,6 +116,14 @@ const DogSearch = () => {
                 <span>Name: {dog.name}</span>
                 <span>Breed: {dog.breed}</span>
                 <span>Age: {dog.age}</span>
+                <span className="">
+                  Address:{" "}
+                  {dog.address?.address1 && `${dog.address.address1}, `}
+                  {dog.address?.city &&
+                    `${capitalizeFirstLetter(dog.address.city)}, `}
+                  {dog.address?.state && `${dog.address.state.toUpperCase()}, `}
+                  {dog.address?.zipCode && dog.address.zipCode}
+                </span>
                 {/* {locationArr && locationArr[index] && (
                 <span>
                   {" "}
@@ -125,40 +141,42 @@ const DogSearch = () => {
               ></Image>
             </div>
             <div className="my-2 flex w-full flex-col items-center gap-1">
-              {/* <button
-              className="w-32 border border-black px-1"
-              onClick={() => addToFavorites(dog.id)}
-            >
-              Add to Favorites
-            </button> */}
+              <button
+                className="w-32 border border-black px-1"
+                onClick={() => addToFavorites(dog)}
+              >
+                Add to Favorites
+              </button>
             </div>
           </div>
         ))}
-        <div className="mb-2 flex w-full justify-evenly">
+        {/* Pagination */}
+
+        {/* <div className="mb-2 flex w-full justify-evenly">
           <button
             className="border-2 border-black px-1"
-            //   onClick={() => {
-            //     setCurrentPage(currentPage - 1)
-            //     fetchPrev(prevParams)
-            //   }}
-            //   disabled={currentPage <= 0}
+              onClick={() => {
+                setCurrentPage(currentPage - 1)
+                fetchPrev(prevParams)
+              }}
+              disabled={currentPage <= 0}
           >
             Prev Page
           </button>
-          <p>{/* Page {currentPage + 1} of {totalPages} */}</p>
+          <p>Page {currentPage + 1} of {totalPages}</p>
           <button
             className="border-2 border-black px-1"
-            //   onClick={() => {
-            //     setCurrentPage(currentPage + 1)
-            //     fetchNext(nextParams)
-            //   }}
-            //   disabled={currentPage >= totalPages - 1}
+              onClick={() => {
+                setCurrentPage(currentPage + 1)
+                fetchNext(nextParams)
+              }}
+              disabled={currentPage >= totalPages - 1}
           >
             Next page
           </button>
-        </div>
+        </div> */}
       </div>
-    {/* // </Layout> */}
+      {/* // </Layout> */}
     </>
   );
 };

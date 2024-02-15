@@ -15,7 +15,6 @@ export const dogRouter = createTRPCRouter({
           address: true,
         },
       });
-      console.log("dogs", dogs);
       return dogs;
     } catch (e) {
       console.error("Dogs unable to be fetched", e);
@@ -51,7 +50,6 @@ export const dogRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // console.log("input", input);
         const dogs = await ctx.db.dog.create({
           data: {
             id: input.id,

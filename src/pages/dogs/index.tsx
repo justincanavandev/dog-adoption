@@ -1,4 +1,4 @@
-import DogSearch from "~/components/all-dogs/DogSearch";
+import DogSearch from "~/components/dogs/DogSearch";
 import { api } from "~/utils/api";
 import { useState, useEffect } from "react";
 import { DogContext } from "~/context/DogContext";
@@ -7,6 +7,7 @@ import type { DogWithRelations } from "~/types/dog-types";
 
 const DogPage = () => {
   const [dogs, setDogs] = useState<DogWithRelations[]>([]);
+  const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
   const {
     data: allDogs,
     isLoading: isDogsLoading,
@@ -17,7 +18,7 @@ const DogPage = () => {
   useEffect(() => {
     if (isDogsSuccess && !isDogsLoading && dogs) {
       if (allDogs) {
-        console.log('allDogs', allDogs)
+        console.log("allDogs", allDogs);
         setDogs(allDogs);
       }
     }
@@ -32,6 +33,8 @@ const DogPage = () => {
         isDogsLoading,
         isDogsSuccess,
         isDogsError,
+        favoriteDogs,
+        setFavoriteDogs
       }}
     >
       {isDogsLoading && <Spinner />}

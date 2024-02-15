@@ -11,6 +11,8 @@ export type DogContextType = {
   isDogsLoading: boolean,
   isDogsSuccess: boolean,
   isDogsError: boolean
+  favoriteDogs: DogWithRelations[]
+  setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
 };
 
 export const DogContext = createContext({} as DogContextType);
