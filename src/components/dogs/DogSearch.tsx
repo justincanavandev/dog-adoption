@@ -115,7 +115,7 @@ const DogSearch = () => {
               <div className="xs:text-[1.2rem] flex flex-col gap-1  pl-2">
                 <span>Name: {dog.name}</span>
                 <span>Breed: {dog.breed}</span>
-                <span>Age: {dog.age}</span>
+                {/* <span>Age: {dog.age}</span> */}
                 <span className="">
                   Address:{" "}
                   {dog.address?.address1 && `${dog.address.address1}, `}
