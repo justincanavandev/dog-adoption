@@ -6,7 +6,7 @@
 // import { fetchPrevPage } from "./api/paginationFns"
 // import { getNewDogs } from "./api/getNewDogs"
 
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
