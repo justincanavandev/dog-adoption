@@ -1,12 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import { useContext } from "react";
 import { api } from "~/utils/api";
-import { DogContext } from "~/context/DogContext";
 import Link from "next/link";
 import { roboto } from "~/styles/fonts";
 
@@ -14,17 +8,6 @@ export default function Home() {
   // petfinder API set up
   // https://www.youtube.com/watch?v=RCg1KKs8v9I
 
-  const { allDogs } = useContext(DogContext);
-  // const { data: allDogs, isLoading: isDogsLoading, isSuccess: isDogsSuccess, isError: isDogsError } = api.dog.getAll.useQuery()
-  const { mutate: addOneDog } = api.dog.createOne.useMutation({});
-
-  console.log("allDogs", allDogs);
-
-  const addAllDogs = () => {
-    if (allDogs) {
-      allDogs.map((dog) => addOneDog(dog));
-    }
-  };
 
   return (
     <>
@@ -34,7 +17,6 @@ export default function Home() {
       </Head>
       <main className={`${roboto.className} flex min-h-screen flex-col items-center justify-center`}>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <button onClick={() => addAllDogs()}>Add All Dogs</button>
           <Link href="/dogs">Go to Dogs Page</Link>
           <div className="flex flex-col items-center gap-2">
             <AuthShowcase />

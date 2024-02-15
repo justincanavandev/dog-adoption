@@ -8,9 +8,9 @@ export type DogContextType = {
   dogs: DogWithRelations[];
   setDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
   allDogs: DogWithRelations[] | undefined,
-  isDogsLoading: boolean,
-  isDogsSuccess: boolean,
-  isDogsError: boolean
+  // isDogsLoading: boolean,
+  // isDogsSuccess: boolean,
+  // isDogsError: boolean
   favoriteDogs: DogWithRelations[]
   setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
 };
