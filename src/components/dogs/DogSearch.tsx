@@ -34,7 +34,7 @@ const DogSearch = () => {
 
   //   const totalPages = Math.ceil(total / 25)
 
-  const { dogs, allDogs, favoriteDogs, setFavoriteDogs } =
+  const { dogs, favoriteDogs, setFavoriteDogs } =
     useContext(DogContext);
   // const [favoriteDogs, setFavoriteDogs] = useState({})
 
@@ -46,9 +46,9 @@ const DogSearch = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("favoriteDogs", favoriteDogs);
-  }, [favoriteDogs]);
+  // useEffect(() => {
+  //   console.log("favoriteDogs", favoriteDogs);
+  // }, [favoriteDogs]);
 
   //   const fetchNext = async (nextParams: string): Promise<void> => {
   //     let response: AxiosResponse<any, any> | undefined =

@@ -82,4 +82,34 @@ export const dogRouter = createTRPCRouter({
         console.error(e);
       }
     }),
+  getAllSearch: protectedProcedure
+    .input(
+      z.object({
+        age: z
+          .string()
+          .refine(
+            (val) => val === "Baby" || val === "Young" || val === "Adult",
+            {
+              message: "String must match Age type",
+            },
+          ),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const dogs = await ctx.db.dog.findMany({
+          where: {
+            age: input.age,
+          },
+          include: {
+            photos: true,
+            address: true
+          }
+        });
+        console.log('dogs', dogs)
+        return dogs
+      } catch (e) {
+        console.error("Unable to find dogs", e)
+      }
+    }),
 });
