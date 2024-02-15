@@ -12,12 +12,12 @@ import "~/styles/globals.css";
 import { useState, useEffect } from "react";
 import type { AuthOResponse } from "~/types/auth-types";
 import { AuthContext } from "~/context/APIAuthContext";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 
 import { roboto } from "~/styles/fonts";
 import Layout from "~/components/layout/Layout";
-import type { DogWithRelations } from "~/types/dog-types";
-import type { Photo } from "@prisma/client";
+// import type { DogWithRelations } from "~/types/dog-types";
+// import type { Photo } from "@prisma/client";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -42,82 +42,82 @@ const MyApp: AppType<{ session: Session | null }> = ({
     void fetchAccessToken();
   }, []);
 
-  const [dogs, setDogs] = useState<DogWithRelations[]>([]);
+  // const [dogs, setDogs] = useState<DogWithRelations[]>([]);
 
-  const { data: animalQuery } = useQuery({
-    queryKey: ["getAllDogs"],
-    queryFn: () => getAllAnimals(accessToken, API_BASE_URL),
-    enabled: !!accessToken,
-  });
+  // const { data: animalQuery } = useQuery({
+  //   queryKey: ["getAllDogs"],
+  //   queryFn: () => getAllAnimals(accessToken, API_BASE_URL),
+  //   enabled: !!accessToken,
+  // });
 
-  const getAllAnimals = async (accessToken: string | null, baseUrl: string) => {
-    if (accessToken === null) return;
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      const response = await axios.get(`${baseUrl}/animals?limit=100`, config);
+  // const getAllAnimals = async (accessToken: string | null, baseUrl: string) => {
+  //   if (accessToken === null) return;
+  //   try {
+  //     const config = {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     };
+  //     const response = await axios.get(`${baseUrl}/animals?limit=100`, config);
 
-      return response;
-    } catch (e) {
-      console.error(e);
-      throw new Error();
-    }
-  };
+  //     return response;
+  //   } catch (e) {
+  //     console.error(e);
+  //     throw new Error();
+  //   }
+  // };
 
-  useEffect(() => {
-    if (animalQuery) {
-      // console.log("animalQuery", animalQuery);
-      const filteredDogs: DogWithRelations[] = animalQuery.data.animals
-        .filter(
-          (animal) => animal.species === "Dog" && animal.photos.length > 0,
-        )
-        .map(
-          (dog) =>
-            (dog = {
-              name: dog.name,
-              age: dog.age,
-              id: dog.id,
-              breed: dog.breeds.primary,
-              gender: dog.gender,
-              photos: dog.photos.map((photo: Photo) => {
-                return {
-                  ...photo,
-                  id: "ckgqha4yg0000i6lkb78sl27k",
-                  dogId: dog.id,
-                };
-              }),
-              address: {
-                address1: dog.contact.address.address1,
-                address2: dog.contact.address.address2,
-                city: dog.contact.address.city,
-                state: dog.contact.address.state,
-                zipCode: dog.contact.address.postcode,
-                dogId: dog.id,
-              },
-            }),
-        );
-      // console.log("filteredDogs", filteredDogs);
-      setDogs(filteredDogs);
-    }
-  }, [animalQuery]);
-  // console.log("dogs", dogs);
+  // useEffect(() => {
+  //   if (animalQuery) {
+  //     // console.log("animalQuery", animalQuery);
+  //     const filteredDogs: DogWithRelations[] = animalQuery.data.animals
+  //       .filter(
+  //         (animal) => animal.species === "Dog" && animal.photos.length > 0,
+  //       )
+  //       .map(
+  //         (dog) =>
+  //           (dog = {
+  //             name: dog.name,
+  //             age: dog.age,
+  //             id: dog.id,
+  //             breed: dog.breeds.primary,
+  //             gender: dog.gender,
+  //             photos: dog.photos.map((photo: Photo) => {
+  //               return {
+  //                 ...photo,
+  //                 id: "ckgqha4yg0000i6lkb78sl27k",
+  //                 dogId: dog.id,
+  //               };
+  //             }),
+  //             address: {
+  //               address1: dog.contact.address.address1,
+  //               address2: dog.contact.address.address2,
+  //               city: dog.contact.address.city,
+  //               state: dog.contact.address.state,
+  //               zipCode: dog.contact.address.postcode,
+  //               dogId: dog.id,
+  //             },
+  //           }),
+  //       );
+  //     // console.log("filteredDogs", filteredDogs);
+  //     setDogs(filteredDogs);
+  //   }
+  // }, [animalQuery]);
+  // // console.log("dogs", dogs);
 
-  const { mutate: addOneDog } = api.dog.createOne.useMutation({});
+  // const { mutate: addOneDog } = api.dog.createOne.useMutation({});
 
-  const addAllDogs = () => {
-    dogs.map((dog: DogWithRelations) => addOneDog(dog));
-  };
+  // const addAllDogs = () => {
+  //   dogs.map((dog: DogWithRelations) => addOneDog(dog));
+  // };
 
   return (
     <SessionProvider session={session}>
       <Layout>
         <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
           <main className={`${roboto.className}`}>
-            <button onClick={() => addAllDogs()}>Add All Dogs</button>
+            {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
             {/* Component is just whatever the current component is */}
             <Component {...pageProps} />
           </main>
