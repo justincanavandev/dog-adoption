@@ -161,7 +161,7 @@ const SearchInputs = () => {
 
   const handleChoice = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    console.log("filteredDogs", filteredDogs);
+   console.log('value', value)
     // setDogs(filteredDogs)
   };
 

@@ -6,7 +6,7 @@
 // import { fetchPrevPage } from "./api/paginationFns"
 // import { getNewDogs } from "./api/getNewDogs"
 
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -106,7 +106,7 @@ const DogSearch = () => {
         <Link href="/">Go to Home Page</Link>
         <h2 className="w-full text-center text-[1.5rem]"> View All Dogs!</h2>
 
-        {dogs.map((dog, index) => (
+        {dogs.map((dog) => (
           <div
             key={dog.id}
             className="mt-6 flex w-[45%] flex-col items-center justify-between rounded-md border-2 border-black"
