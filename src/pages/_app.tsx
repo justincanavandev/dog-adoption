@@ -31,7 +31,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       try {
         const res: AxiosResponse<AuthOResponse> =
           await axios.get("/api/oauth-token");
-        console.log("res", res);
+        // console.log("res", res);
         const data: AuthOResponse = res.data;
         const { access_token } = data;
         setAccessToken(access_token);
@@ -70,7 +70,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   useEffect(() => {
     if (animalQuery) {
-      console.log("animalQuery", animalQuery);
+      // console.log("animalQuery", animalQuery);
       const filteredDogs: DogWithRelations[] = animalQuery.data.animals
         .filter(
           (animal) => animal.species === "Dog" && animal.photos.length > 0,
@@ -100,11 +100,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
               },
             }),
         );
-      console.log("filteredDogs", filteredDogs);
+      // console.log("filteredDogs", filteredDogs);
       setDogs(filteredDogs);
     }
   }, [animalQuery]);
-  console.log("dogs", dogs);
+  // console.log("dogs", dogs);
 
   const { mutate: addOneDog } = api.dog.createOne.useMutation({});
 

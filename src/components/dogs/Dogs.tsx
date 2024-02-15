@@ -1,7 +1,8 @@
 import { useState } from "react";
-import type { DogWithRelations } from "~/types/dog-types";
+import type { DogWithRelations, Age } from "~/types/dog-types";
 import { DogContext } from "~/context/DogContext";
 import DogSearch from "./DogSearch";
+import SearchInputs from "./SearchInputs";
 
 type DogsProps = {
   allDogs: DogWithRelations[];
@@ -10,6 +11,7 @@ type DogsProps = {
 const Dogs = ({ allDogs }: DogsProps) => {
   const [dogs, setDogs] = useState<DogWithRelations[]>(allDogs);
   const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
+  const [ageSearch, setAgeSearch] = useState<Age>("");
   return (
     <DogContext.Provider
       value={{
@@ -18,9 +20,11 @@ const Dogs = ({ allDogs }: DogsProps) => {
         allDogs,
         favoriteDogs,
         setFavoriteDogs,
+        ageSearch,
+        setAgeSearch,
       }}
     >
-      {/* <SearchInputs /> */}
+      <SearchInputs />
       {/* {errorMessage && (
         <div className="mt-4 w-full text-center">{errorMessage}</div>
       )} */}
