@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { DogWithRelations, Age } from "~/types/dog-types";
+import type { DogWithRelations, Age, State } from "~/types/dog-types";
 import type { SetStateAction } from "react";
 
 export type DogContextType = {
@@ -10,6 +10,9 @@ export type DogContextType = {
   setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
   ageSearch: Age;
   setAgeSearch: React.Dispatch<SetStateAction<Age>>;
+  stateSearch: State
+  setStateSearch: React.Dispatch<SetStateAction<State>>;
+
 };
 
 export const DogContext = createContext({} as DogContextType);

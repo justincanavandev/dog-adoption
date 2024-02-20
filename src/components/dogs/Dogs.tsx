@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { DogWithRelations, Age } from "~/types/dog-types";
+import type { DogWithRelations, Age, State } from "~/types/dog-types";
 import { DogContext } from "~/context/DogContext";
 import DogSearch from "./DogSearch";
 import SearchInputs from "./SearchInputs";
@@ -12,6 +12,8 @@ const Dogs = ({ allDogs }: DogsProps) => {
   const [dogs, setDogs] = useState<DogWithRelations[]>(allDogs);
   const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
   const [ageSearch, setAgeSearch] = useState<Age>("");
+  const [stateSearch, setStateSearch] = useState<State>("")
+
   return (
     <DogContext.Provider
       value={{
@@ -22,6 +24,8 @@ const Dogs = ({ allDogs }: DogsProps) => {
         setFavoriteDogs,
         ageSearch,
         setAgeSearch,
+        stateSearch,
+        setStateSearch
       }}
     >
       <SearchInputs />

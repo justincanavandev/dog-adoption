@@ -5,6 +5,9 @@ import {
   protectedProcedure,
   // publicProcedure,
 } from "~/server/api/trpc";
+import type { DogParams } from "~/types/dog-types";
+
+import { isAgeValid, isStateValid } from "~/utils/type-guards";
 
 export const dogRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -85,31 +88,50 @@ export const dogRouter = createTRPCRouter({
   getAllSearch: protectedProcedure
     .input(
       z.object({
-        age: z
-          .string()
-          .refine(
-            (val) => val === "Baby" || val === "Young" || val === "Adult",
-            {
-              message: "String must match Age type",
-            },
-          ),
+        // age: z.string().refine((age) => isAgeValid(age), {
+        //   message: "String must match Age type",
+        // }),
+  
+        age: z.string(),
+        // state: z.string().refine((state) => isStateValid(state), {
+        //   message: "String must be State type",
+        // }),
+        state: z.string()
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
-        const dogs = await ctx.db.dog.findMany({
-          where: {
-            age: input.age,
-          },
+        console.log('input', input)
+        const params: DogParams = {
+          where: {},
           include: {
             photos: true,
-            address: true
-          }
-        });
-        console.log('dogs', dogs)
-        return dogs
+            address: true,
+          },
+        };
+        const { where } = params;
+        console.log('input', input)
+      //  if (input.includes("state")) {
+      //   where.address = {}
+      //  }
+  
+        if (input.age.length > 0 && isAgeValid(input.age)) {
+          where.age = input.age;
+        }
+        if(Object.keys(input).includes("state")) {
+          where.address = {}
+        }
+
+        if (input.state.length > 0 && isStateValid(input.state) && where.address) {
+        
+          where.address.state = input.state
+        }
+
+        const dogs = await ctx.db.dog.findMany(params);
+        // console.log("dogs", dogs);
+        return dogs;
       } catch (e) {
-        console.error("Unable to find dogs", e)
+        console.error("Unable to find dogs", e);
       }
     }),
 });

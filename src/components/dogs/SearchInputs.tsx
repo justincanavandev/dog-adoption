@@ -10,9 +10,11 @@ import { useContext, useEffect } from "react";
 import { fiftyStates } from "~/utils/helpers";
 import { DogContext } from "~/context/DogContext";
 import { isAgeValid } from "~/utils/type-guards";
+import { isStateValid } from "~/utils/type-guards";
 
 const SearchInputs = () => {
-  const { ageSearch, setAgeSearch, setDogs } = useContext(DogContext);
+  const { ageSearch, setAgeSearch, stateSearch, setStateSearch, setDogs } =
+    useContext(DogContext);
 
   //   const {
   //     breedSearch,
@@ -149,33 +151,60 @@ const SearchInputs = () => {
   // const handleSearch = () => {
 
   // }
-  const { data: filteredDogs, isSuccess: isFilteredSuccess } =
-    api.dog.getAllSearch.useQuery(
-      {
-        age: ageSearch,
-      },
-      {
-        enabled: ageSearch.length > 0,
-      },
-    );
+  const {
+    // data: filteredDogs,
+    // isSuccess: isFilteredSuccess,
+    refetch: fetchFilteredDogs,
+  } = api.dog.getAllSearch.useQuery(
+    {
+      age: ageSearch,
+
+      state: stateSearch,
+    },
+    {
+      // enabled: ageSearch.length > 0,
+      enabled: false,
+    },
+  );
 
   const handleChoice = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-   console.log('value', value)
+    console.log("value", value);
     // setDogs(filteredDogs)
   };
 
-  useEffect(() => {
-    console.log("isFilteredSuccess", isFilteredSuccess);
-    if (isFilteredSuccess && filteredDogs) {
-      console.log("filteredDogs", filteredDogs);
-      setDogs(filteredDogs);
-    }
-  }, [isFilteredSuccess, filteredDogs, setDogs]);
+  // useEffect(() => {
+  //   console.log("isFilteredSuccess", isFilteredSuccess);
+  //   if (isFilteredSuccess && filteredDogs) {
+  //     console.log("filteredDogs", filteredDogs);
+  //     setDogs(filteredDogs);
+  //   }
+  // }, [isFilteredSuccess, filteredDogs, setDogs]);
 
   // useEffect(() => {
   //   console.log("filteredDogs", filteredDogs);
   // }, [filteredDogs]);
+
+  const handleSearch = async () => {
+    try {
+      const response = await fetchFilteredDogs();
+      const fetchedDogs = response.data;
+
+      if (fetchedDogs) {
+        console.log("fetchedDogs", fetchedDogs);
+        setDogs(fetchedDogs);
+        // setAgeSearch("")
+        // setStateSearch("")
+      }
+    } catch (e) {
+      console.error("Unable to fetch filtered dogs", e)
+    }
+  };
+
+  useEffect(() => {
+    console.log("stateSearch", stateSearch);
+    console.log("ageSearch", ageSearch);
+  }, [stateSearch, ageSearch]);
 
   return (
     <div className="flex flex-col items-start">
@@ -206,11 +235,14 @@ const SearchInputs = () => {
           />
           <select
             className="border-2 border-black"
-            // placeholder="State"
-            // value={stateSearch}
-            // onChange={(e) => setStateSearch(e.target.value)}
+            value={stateSearch}
+            onChange={(e) =>
+              isStateValid(e.target.value) && setStateSearch(e.target.value)
+            }
           >
-            <option>N/A</option>
+            <option className="" disabled selected>
+              State
+            </option>
             {fiftyStates.map((state) => (
               <option key={state} value={state}>
                 {state}
@@ -220,6 +252,7 @@ const SearchInputs = () => {
           <select
             onChange={(e) => {
               isAgeValid(e.target.value) && setAgeSearch(e.target.value);
+              console.log('e.target', e.target.value)
               handleChoice(e);
             }}
             className="w-36 border-2 border-black"
@@ -234,14 +267,11 @@ const SearchInputs = () => {
           <div className="flex w-full justify-center">
             <button
               className="w-24 border-2 border-black"
-              // onClick={handleSearch}
+              onClick={handleSearch}
             >
               Search
             </button>
           </div>
-          {/* {favoriteDogsIds.length === 0 && (
-            <hr className="w-[80%] mt-4 border-black "></hr>
-          )} */}
         </div>
       </>
     </div>
