@@ -44,6 +44,8 @@ const SearchInputs = () => {
         setAgeSearch("");
         setStateSearch("");
         setCitySearch("")
+        setZipSearch("")
+        setBreedSearch("")
       }
     } catch (e) {
       console.error("Unable to fetch filtered dogs", e);
