@@ -263,6 +263,7 @@ const SearchInputs = () => {
             <option value="Baby">Baby</option>
             <option value="Young">Young</option>
             <option value="Adult">Adult</option>
+            <option value="Senior">Senior</option>
           </select>
           <div className="flex w-full justify-center">
             <button

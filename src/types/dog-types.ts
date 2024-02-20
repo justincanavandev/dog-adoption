@@ -6,7 +6,7 @@ const dogWithRelations = Prisma.validator<Prisma.DogDefaultArgs>()({
 
 export type DogWithRelations = Prisma.DogGetPayload<typeof dogWithRelations>;
 
-export type Age = "Baby" | "Young" | "Adult" | "";
+export type Age = "Baby" | "Young" | "Adult" | "Senior" | "";
 
 export type DogParams = {
   where: {
