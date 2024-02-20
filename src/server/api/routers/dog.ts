@@ -8,6 +8,7 @@ import {
 import type { DogParams } from "~/types/dog-types";
 
 import { isAgeValid, isStateValid } from "~/utils/type-guards";
+import { isZipCodeValid } from "~/utils/helpers";
 
 export const dogRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -88,20 +89,31 @@ export const dogRouter = createTRPCRouter({
   getAllSearch: protectedProcedure
     .input(
       z.object({
-        // age: z.string().refine((age) => isAgeValid(age), {
-        //   message: "String must match Age type",
-        // }),
-  
-        age: z.string(),
-        // state: z.string().refine((state) => isStateValid(state), {
-        //   message: "String must be State type",
-        // }),
-        state: z.string()
+        age: z.union([
+          z.string().refine((age) => isAgeValid(age.trim()), {
+            message: "String must match Age type",
+          }),
+          z.literal(""),
+        ]),
+        state: z.union([
+          z.string().refine((state) => isStateValid(state.trim()), {
+            message: "String must be State type",
+          }),
+          z.literal(""),
+        ]),
+        city: z.string(),
+        zipCode: z.union([
+          z.string().refine((zip) => isZipCodeValid(zip.trim()), {
+            message: "Zip Code must be formatted correctly",
+          }),
+          z.literal(""),
+        ]),
+        breed: z.string()
       }),
     )
     .query(async ({ ctx, input }) => {
       try {
-        console.log('input', input)
+        console.log("input", input);
         const params: DogParams = {
           where: {},
           include: {
@@ -110,25 +122,43 @@ export const dogRouter = createTRPCRouter({
           },
         };
         const { where } = params;
-        console.log('input', input)
-      //  if (input.includes("state")) {
-      //   where.address = {}
-      //  }
-  
+        console.log("input", input);
+
         if (input.age.length > 0 && isAgeValid(input.age)) {
           where.age = input.age;
         }
-        if(Object.keys(input).includes("state")) {
-          where.address = {}
+
+        if (input.breed.length>0) {
+          where.breed = input.breed
         }
 
-        if (input.state.length > 0 && isStateValid(input.state) && where.address) {
-        
-          where.address.state = input.state
+        if (
+          input.state.length > 0 ||
+          input.city.length > 0 ||
+          input.zipCode.length > 0
+        ) {
+          where.address = {};
         }
+
+        if (input.city.length > 0 && where.address) {
+          where.address.city = input.city;
+        }
+
+        if (
+          input.state.length > 0 &&
+          isStateValid(input.state) &&
+          where.address
+        ) {
+          where.address.state = input.state;
+        }
+
+        if (input.zipCode.length > 0 && where.address) {
+          where.address.zipCode = input.zipCode;
+        }
+
+        
 
         const dogs = await ctx.db.dog.findMany(params);
-        // console.log("dogs", dogs);
         return dogs;
       } catch (e) {
         console.error("Unable to find dogs", e);

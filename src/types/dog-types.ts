@@ -10,11 +10,13 @@ export type Age = "Baby" | "Young" | "Adult" | "Senior" | "";
 
 export type DogParams = {
   where: {
-    // state?: State
     address?: {
       state?: State
+      city?: string
+      zipCode?: string
     }
     age?: Age
+    breed?: string
 
   },
   include: {

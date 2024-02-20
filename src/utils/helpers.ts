@@ -22,6 +22,8 @@ export const capitalizeFirstLetter = (word: string) => {
   }
 };
 
+export const isZipCodeValid = (str: string) => /^\d{5}(-\d{4})?$/.test(str);
+
 export const fiftyStates: string[] = [
   "AL",
   "AK",
@@ -73,4 +75,5 @@ export const fiftyStates: string[] = [
   "WV",
   "WI",
   "WY",
+  "",
 ];

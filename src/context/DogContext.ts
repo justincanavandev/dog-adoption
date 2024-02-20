@@ -10,9 +10,14 @@ export type DogContextType = {
   setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
   ageSearch: Age;
   setAgeSearch: React.Dispatch<SetStateAction<Age>>;
-  stateSearch: State
+  stateSearch: State;
   setStateSearch: React.Dispatch<SetStateAction<State>>;
-
+  citySearch: string;
+  setCitySearch: React.Dispatch<SetStateAction<string>>;
+  zipSearch: string;
+  setZipSearch: React.Dispatch<SetStateAction<string>>;
+  breedSearch: string
+  setBreedSearch: React.Dispatch<SetStateAction<string>>;
 };
 
 export const DogContext = createContext({} as DogContextType);

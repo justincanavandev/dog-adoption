@@ -13,144 +13,9 @@ import { isAgeValid } from "~/utils/type-guards";
 import { isStateValid } from "~/utils/type-guards";
 
 const SearchInputs = () => {
-  const { ageSearch, setAgeSearch, stateSearch, setStateSearch, setDogs } =
+  const { ageSearch, setAgeSearch, stateSearch, setStateSearch, citySearch, setCitySearch, setDogs, zipSearch, setZipSearch, breedSearch, setBreedSearch } =
     useContext(DogContext);
 
-  //   const {
-  //     breedSearch,
-  //     setBreedSearch,
-  //     citySearch,
-  //     setCitySearch,
-  //     zipSearch,
-  //     setZipSearch,
-  //     stateSearch,
-  //     setStateSearch,
-  //     ageMin,
-  //     setAgeMin,
-  //     ageMax,
-  //     setAgeMax,
-  //     favoriteDogsIds,
-  //     currentPage,
-  //     setCurrentPage,
-  //     sortChoice,
-  //     setSortChoice,
-  //     setTotal,
-  //     setNextParams,
-  //     setErrorMessage,
-  //     setZipCodeArr,
-  //     fetchLocations,
-  //     fetchDogObjects,
-  //     searchByLocation,
-  //   } = useContext(DogsContext)
-
-  // const handleSearch = async () => {
-  //   // if (currentPage !== 0) {
-  //   //   setCurrentPage(0)
-  //   // }
-
-  //   const params: DogSearch = {};
-
-  //   if (breedSearch) {
-  //     params.breeds = [breedSearch];
-  //   }
-  //   if (zipSearch) {
-  //     params.zipCodes = [zipSearch];
-  //     try {
-  //       let locations = await fetchLocations([zipSearch]);
-  //       setZipCodeArr(locations);
-  //     } catch (error) {
-  //       console.error("Couldn't fetch locations!", error);
-  //     }
-  //   }
-  //   if (ageMin) {
-  //     if (typeof ageMin === "string") {
-  //       params.ageMin = parseInt(ageMin);
-  //     } else {
-  //       params.ageMin = ageMin;
-  //     }
-  //   }
-  //   if (ageMax) {
-  //     if (typeof ageMax === "string") {
-  //       params.ageMax = parseInt(ageMax);
-  //     } else {
-  //       params.ageMax = ageMax;
-  //     }
-  //   }
-  //   if (sortChoice) {
-  //     params.sort = `breed:${sortChoice}`;
-  //   }
-
-  //   //there was a CORS issue when sending an array of multiple zip codes so I had to take this functionality out.
-
-  //   if (citySearch || stateSearch) {
-  //     try {
-  //       const filteredZips: string[] | undefined =
-  //         await handleSearchByLocation();
-
-  //       params.zipCodes = filteredZips;
-
-  //       if (filteredZips) {
-  //         await fetchLocations(filteredZips);
-  //       }
-  //     } catch (error) {
-  //       console.error("Couldn't fetch locations", error);
-  //     }
-  //   }
-
-  //   const response = await search(params);
-
-  //   if (response) {
-  //     const isResponse200 = responseCheck(response);
-  //     if (isResponse200) {
-  //       setTotal(response.data.total);
-  //       setNextParams(response.data.next);
-  //       fetchDogObjects(response.data.resultIds);
-  //       if (response.data.total === 0) {
-  //         setErrorMessage("No Dogs Found :(");
-  //       }
-  //       if (response.data.total > 0) {
-  //         setErrorMessage("");
-  //       }
-  //     }
-
-  //     if (!response.status) {
-  //       throw new Error("Fetch request failed!");
-  //     }
-  //   }
-  // };
-
-  // const handleSearchByLocation: () => Promise<
-  //   string[] | undefined
-  // > = async () => {
-  //   const params: DogLocationSearch = {
-  //     size: 10000,
-  //     from: currentPage * 25,
-  //   };
-
-  //   if (citySearch) {
-  //     params.city = citySearch;
-  //   }
-  //   if (stateSearch) {
-  //     params.states = [stateSearch];
-  //   }
-
-  //   const response = await searchByLocation(params);
-
-  //   if (response) {
-  //     const isResponse200: boolean = responseCheck(response);
-  //     if (isResponse200) {
-  //       let zipCodes: string[] = response.data.results.map(
-  //         (location: Location) => location.zip_code,
-  //       );
-
-  //       return zipCodes;
-  //     }
-  //   }
-  // };
-
-  // const handleSearch = () => {
-
-  // }
   const {
     // data: filteredDogs,
     // isSuccess: isFilteredSuccess,
@@ -158,32 +23,16 @@ const SearchInputs = () => {
   } = api.dog.getAllSearch.useQuery(
     {
       age: ageSearch,
-
       state: stateSearch,
+      city: citySearch,
+      zipCode: zipSearch,
+      breed: breedSearch
     },
     {
-      // enabled: ageSearch.length > 0,
       enabled: false,
     },
   );
 
-  const handleChoice = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-    console.log("value", value);
-    // setDogs(filteredDogs)
-  };
-
-  // useEffect(() => {
-  //   console.log("isFilteredSuccess", isFilteredSuccess);
-  //   if (isFilteredSuccess && filteredDogs) {
-  //     console.log("filteredDogs", filteredDogs);
-  //     setDogs(filteredDogs);
-  //   }
-  // }, [isFilteredSuccess, filteredDogs, setDogs]);
-
-  // useEffect(() => {
-  //   console.log("filteredDogs", filteredDogs);
-  // }, [filteredDogs]);
 
   const handleSearch = async () => {
     try {
@@ -191,13 +40,13 @@ const SearchInputs = () => {
       const fetchedDogs = response.data;
 
       if (fetchedDogs) {
-        console.log("fetchedDogs", fetchedDogs);
         setDogs(fetchedDogs);
-        // setAgeSearch("")
-        // setStateSearch("")
+        setAgeSearch("");
+        setStateSearch("");
+        setCitySearch("")
       }
     } catch (e) {
-      console.error("Unable to fetch filtered dogs", e)
+      console.error("Unable to fetch filtered dogs", e);
     }
   };
 
@@ -216,26 +65,25 @@ const SearchInputs = () => {
             className="border-2 border-black "
             type="text"
             placeholder="Breed"
-            // value={breedSearch}
-            // onChange={(e) => setBreedSearch(e.target.value)}
+            value={breedSearch}
+            onChange={(e) => setBreedSearch(e.target.value)}
           />
           <input
             className="border-2 border-black"
             type="text"
             placeholder="City"
-            // value={citySearch}
-            // onChange={(e) => setCitySearch(e.target.value)}
+            value={citySearch}
+            onChange={(e) => setCitySearch(e.target.value)}
           />
           <input
             className="border-2 border-black"
             type="text"
             placeholder="Zip Code"
-            // value={zipSearch}
-            // onChange={(e) => setZipSearch(e.target.value)}
+            value={zipSearch}
+            onChange={(e) => setZipSearch(e.target.value)}
           />
           <select
             className="border-2 border-black"
-            value={stateSearch}
             onChange={(e) =>
               isStateValid(e.target.value) && setStateSearch(e.target.value)
             }
@@ -243,21 +91,22 @@ const SearchInputs = () => {
             <option className="" disabled selected>
               State
             </option>
-            {fiftyStates.map((state) => (
-              <option key={state} value={state}>
-                {state}
-              </option>
-            ))}
+            {fiftyStates.map(
+              (state) =>
+                state.length > 0 && (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ),
+            )}
           </select>
           <select
             onChange={(e) => {
               isAgeValid(e.target.value) && setAgeSearch(e.target.value);
-              console.log('e.target', e.target.value)
-              handleChoice(e);
             }}
             className="w-36 border-2 border-black"
           >
-            <option value="" disabled selected>
+            <option disabled selected>
               Age
             </option>
             <option value="Baby">Baby</option>

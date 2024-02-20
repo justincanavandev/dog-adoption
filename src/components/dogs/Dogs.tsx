@@ -12,7 +12,10 @@ const Dogs = ({ allDogs }: DogsProps) => {
   const [dogs, setDogs] = useState<DogWithRelations[]>(allDogs);
   const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
   const [ageSearch, setAgeSearch] = useState<Age>("");
-  const [stateSearch, setStateSearch] = useState<State>("")
+  const [stateSearch, setStateSearch] = useState<State>("");
+  const [citySearch, setCitySearch] = useState<string>("");
+  const [zipSearch, setZipSearch] = useState<string>("");
+  const [breedSearch, setBreedSearch] = useState<string>("");
 
   return (
     <DogContext.Provider
@@ -25,7 +28,13 @@ const Dogs = ({ allDogs }: DogsProps) => {
         ageSearch,
         setAgeSearch,
         stateSearch,
-        setStateSearch
+        setStateSearch,
+        citySearch,
+        setCitySearch,
+        zipSearch,
+        setZipSearch,
+        breedSearch,
+        setBreedSearch,
       }}
     >
       <SearchInputs />

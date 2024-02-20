@@ -1,7 +1,8 @@
 import type { Age, State } from "~/types/dog-types";
 import { fiftyStates } from "./helpers";
 
-const ageOptions = ["Baby", "Young", "Adult"];
+const ageOptions = ["Baby", "Young", "Adult", "Senior", ""];
+
 
 export const isAgeValid = (age: unknown): age is Age => {
   return typeof age === "string" && ageOptions.includes(age);
