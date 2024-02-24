@@ -15,7 +15,7 @@ import Head from "next/head";
 import { capitalizeFirstLetter } from "~/utils/helpers";
 import type { DogWithRelations } from "~/types/dog-types";
 
-const DogSearch = () => {
+const DogResults = () => {
   //   const {
   //     currentPage,
   //     setCurrentPage,
@@ -36,7 +36,6 @@ const DogSearch = () => {
 
   const { dogs, favoriteDogs, setFavoriteDogs } =
     useContext(DogContext);
-  // const [favoriteDogs, setFavoriteDogs] = useState({})
 
   const addToFavorites = async (dog: DogWithRelations): Promise<void> => {
     if (favoriteDogs.includes(dog)) {
@@ -124,14 +123,7 @@ const DogSearch = () => {
                   {dog.address?.state && `${dog.address.state.toUpperCase()}, `}
                   {dog.address?.zipCode && dog.address.zipCode}
                 </span>
-                {/* {locationArr && locationArr[index] && (
-                <span>
-                  {" "}
-                  {`${locationArr[index].city}, ${locationArr[index].state}, ${locationArr[index].zip_code}`}
-                </span>
-              )} */}
               </div>
-              {/* <img */}
               <Image
                 alt="dog photo"
                 width={300}
@@ -181,4 +173,4 @@ const DogSearch = () => {
   );
 };
 
-export default DogSearch;
+export default DogResults;

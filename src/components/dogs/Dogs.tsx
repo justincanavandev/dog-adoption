@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { DogWithRelations, Age, State } from "~/types/dog-types";
 import { DogContext } from "~/context/DogContext";
-import DogSearch from "./DogSearch";
+import DogResults from "./DogResults";
 import SearchInputs from "./SearchInputs";
 
 type DogsProps = {
@@ -44,8 +44,7 @@ const Dogs = ({ allDogs }: DogsProps) => {
       {/* {matchedDog.id && <MatchedDog />} */}
       {/* {favoriteDogObjects.length > 0 && <FavoriteDogs />} */}
 
-      {/* {filteredDogs.length > 0 && <DogSearch />} */}
-      <DogSearch />
+      <DogResults />
     </DogContext.Provider>
   );
 };
