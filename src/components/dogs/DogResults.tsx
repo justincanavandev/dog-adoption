@@ -6,7 +6,7 @@
 // import { fetchPrevPage } from "./api/paginationFns"
 // import { getNewDogs } from "./api/getNewDogs"
 
-import { useContext } from "react";
+import { type MutableRefObject, useContext, useEffect, useRef } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -14,6 +14,7 @@ import Link from "next/link";
 import Head from "next/head";
 import { capitalizeFirstLetter } from "~/utils/helpers";
 import type { DogWithRelations } from "~/types/dog-types";
+import FavoriteDogsDialog from "../favorites/FavoriteDogsDialog";
 
 const DogResults = () => {
   //   const {
@@ -34,10 +35,11 @@ const DogResults = () => {
 
   //   const totalPages = Math.ceil(total / 25)
 
-  const { dogs, favoriteDogs, setFavoriteDogs } =
-    useContext(DogContext);
+  const { dogs, favoriteDogs, setFavoriteDogs } = useContext(DogContext);
+  const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
+    useRef(null);
 
-  const addToFavorites = async (dog: DogWithRelations): Promise<void> => {
+  const addToFavorites = (dog: DogWithRelations) => {
     if (favoriteDogs.includes(dog)) {
       console.log("You have already favorited this dog!");
     } else {
@@ -45,9 +47,15 @@ const DogResults = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("favoriteDogs", favoriteDogs);
-  // }, [favoriteDogs]);
+  const removeFromFavorites = (dog: DogWithRelations) => {
+    const filteredDogs = favoriteDogs.filter((favDog) => dog.id !== favDog.id);
+
+    setFavoriteDogs(filteredDogs);
+  };
+
+  useEffect(() => {
+    console.log("favoriteDogs", favoriteDogs);
+  }, [favoriteDogs]);
 
   //   const fetchNext = async (nextParams: string): Promise<void> => {
   //     let response: AxiosResponse<any, any> | undefined =
@@ -96,7 +104,6 @@ const DogResults = () => {
   // }, []);
 
   return (
-    // <Layout>
     <>
       <Head>
         <title>Search for Dogs!</title>
@@ -104,6 +111,14 @@ const DogResults = () => {
       <div className="flex flex-wrap justify-center gap-4">
         <Link href="/">Go to Home Page</Link>
         <h2 className="w-full text-center text-[1.5rem]"> View All Dogs!</h2>
+        <dialog ref={favoriteDialogRef} className="modal">
+          <FavoriteDogsDialog />
+        </dialog>
+        {favoriteDogs.length > 0 && (
+          <button onClick={() => favoriteDialogRef.current?.showModal()}>
+            View Favorites
+          </button>
+        )}
 
         {dogs.map((dog) => (
           <div
@@ -135,9 +150,12 @@ const DogResults = () => {
             <div className="my-2 flex w-full flex-col items-center gap-1">
               <button
                 className="w-32 border border-black px-1"
-                onClick={() => addToFavorites(dog)}
+                onClick={() => {
+                  favoriteDogs.includes(dog) ?
+                  removeFromFavorites(dog) : addToFavorites(dog)
+                }}
               >
-                Add to Favorites
+               {favoriteDogs.includes(dog) ? "Remove From Favorites" : "Add To Favorites"} 
               </button>
             </div>
           </div>
@@ -168,7 +186,6 @@ const DogResults = () => {
           </button>
         </div> */}
       </div>
-      {/* // </Layout> */}
     </>
   );
 };
