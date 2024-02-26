@@ -1,7 +1,7 @@
 // import LogOut from "./Logout"
 // import { fiftyStates } from "../fiftyStates"
 import { api } from "~/utils/api";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 // import { DogsContext } from "./context/DogContext"
 // import { DogSearch, DogLocationSearch } from "../types/types"
 // import { Location } from "../types/types"
@@ -11,22 +11,30 @@ import { fiftyStates } from "~/utils/helpers";
 import { DogContext } from "~/context/DogContext";
 import { isAgeValid } from "~/utils/type-guards";
 import { isStateValid } from "~/utils/type-guards";
+// import type { DogWithRelations } from "~/types/dog-types";
 
 const SearchInputs = () => {
-  const { ageSearch, setAgeSearch, stateSearch, setStateSearch, citySearch, setCitySearch, setDogs, zipSearch, setZipSearch, breedSearch, setBreedSearch } =
-    useContext(DogContext);
-
   const {
-    // data: filteredDogs,
-    // isSuccess: isFilteredSuccess,
-    refetch: fetchFilteredDogs,
-  } = api.dog.getAllSearch.useQuery(
+    ageSearch,
+    setAgeSearch,
+    stateSearch,
+    setStateSearch,
+    citySearch,
+    setCitySearch,
+    setDogs,
+    zipSearch,
+    setZipSearch,
+    breedSearch,
+    setBreedSearch,
+  } = useContext(DogContext);
+
+  const { refetch: fetchFilteredDogs } = api.dog.getAllSearch.useQuery(
     {
       age: ageSearch,
       state: stateSearch,
       city: citySearch,
       zipCode: zipSearch,
-      breed: breedSearch
+      breed: breedSearch,
     },
     {
       enabled: false,
@@ -43,23 +51,32 @@ const SearchInputs = () => {
         setDogs(fetchedDogs);
         setAgeSearch("");
         setStateSearch("");
-        setCitySearch("")
-        setZipSearch("")
-        setBreedSearch("")
+        setCitySearch("");
+        setZipSearch("");
+        setBreedSearch("");
       }
     } catch (e) {
       console.error("Unable to fetch filtered dogs", e);
     }
   };
 
-  useEffect(() => {
-    console.log("stateSearch", stateSearch);
-    console.log("ageSearch", ageSearch);
-  }, [stateSearch, ageSearch]);
+  // useEffect(() => {
+  //   console.log("stateSearch", stateSearch);
+  //   console.log("ageSearch", ageSearch);
+  // }, [stateSearch, ageSearch]);
 
   return (
     <div className="flex flex-col items-start">
       <h1 className="pl-4 text-[1.5rem]">Search for Dogs!</h1>
+      <button
+        onClick={() => {
+          // const favoriteDog = { ...dogById, id: "ckja9sjja0000utdd6qpvwix5" };
+          // dogById &&
+          //   addFavoriteDog({ dogId: dogById.id});
+        }}
+      >
+        Add Favorite Dog
+      </button>
 
       <>
         <div className="flex flex-wrap justify-center gap-2 pt-4">

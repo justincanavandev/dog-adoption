@@ -6,6 +6,7 @@ import {
   // publicProcedure,
 } from "~/server/api/trpc";
 import type { DogParams } from "~/types/dog-types";
+import { TRPCError } from "@trpc/server";
 
 import { isAgeValid, isStateValid } from "~/utils/type-guards";
 import { isZipCodeValid } from "~/utils/helpers";
@@ -108,7 +109,7 @@ export const dogRouter = createTRPCRouter({
           }),
           z.literal(""),
         ]),
-        breed: z.string()
+        breed: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -128,8 +129,8 @@ export const dogRouter = createTRPCRouter({
           where.age = input.age;
         }
 
-        if (input.breed.length>0) {
-          where.breed = input.breed
+        if (input.breed.length > 0) {
+          where.breed = input.breed;
         }
 
         if (
@@ -156,12 +157,37 @@ export const dogRouter = createTRPCRouter({
           where.address.zipCode = input.zipCode;
         }
 
-        
-
         const dogs = await ctx.db.dog.findMany(params);
         return dogs;
       } catch (e) {
         console.error("Unable to find dogs", e);
+      }
+    }),
+  getOneById: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+      try {
+        const dog = await ctx.db.dog.findUnique({
+          where: {
+            id: id,
+          },
+          include: {
+            photos: true,
+            address: true,
+            // favorites: true,
+          },
+        });
+        // console.log('dog', dog)
+        if (!dog) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Dog unable to be fetched",
+          });
+        }
+        return dog;
+      } catch (e) {
+        console.error("Unable to fetch dog", e);
       }
     }),
 });
