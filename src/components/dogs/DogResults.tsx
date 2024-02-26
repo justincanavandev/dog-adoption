@@ -56,21 +56,24 @@ const DogResults = () => {
     },
   );
 
-  // const { mutate: addFavoriteDog } = api.favorites.create.useMutation({});
+  const { mutate: addFavoriteDog } = api.favorites.create.useMutation({});
   const { mutate: updateFavoriteDogs } = api.favorites.update.useMutation({});
 
   const addToFavorites = (dog: DogWithRelations) => {
     if (favoriteDogs.includes(dog)) {
       console.log("You have already favorited this dog!");
+      return
     } else {
       setFavoriteDogs([...favoriteDogs, dog]);
-      // setSelectedFavDog(dog)
-      // getDogById({dogId: dog.id})
-      // addFavoriteDog({ dogIds: [dog.id] });
-      if (currentUser && currentUser.favorites) {
-        const { favorites } = currentUser;
-        const favDogIds = favorites.dogIds;
-        updateFavoriteDogs({ dogIds: [...favDogIds, dog.id] });
+
+      if (currentUser) {
+        if (currentUser.favorites) {
+          const { favorites } = currentUser;
+          const favDogIds = favorites.dogIds;
+          updateFavoriteDogs({ dogIds: [...favDogIds, dog.id] });
+        } else {
+          addFavoriteDog({ dogIds: [dog.id] });
+        }
       }
     }
   };

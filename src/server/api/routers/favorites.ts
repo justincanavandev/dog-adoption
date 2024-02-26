@@ -11,8 +11,6 @@ export const favoriteDogsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        console.log("input", input);
-
         const favorites = await ctx.db.favoriteDogs.create({
           data: {
             userId: ctx.session.user.id,
@@ -22,11 +20,9 @@ export const favoriteDogsRouter = createTRPCRouter({
         if (!favorites) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Dog unable to be created",
+            message: "Favorites unable to be created",
           });
         }
-
-        console.log("favorites", favorites);
         return favorites;
       } catch (e) {
         console.error(e);
@@ -40,24 +36,24 @@ export const favoriteDogsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // const favoriteDogs = await ctx.db.favoriteDogs.findUnique({
-        //   where: {
-        //     userId: ctx.session.user.id,
-        //   },
-        // });
-        // console.log("favoriteDogs", favoriteDogs);
-
         const updatedDogs = await ctx.db.favoriteDogs.update({
           where: {
-            userId: ctx.session.user.id
+            userId: ctx.session.user.id,
           },
           data: {
-            dogIds: input.dogIds
-          }
-        })
-        return updatedDogs
+            dogIds: input.dogIds,
+          },
+        });
+
+        if (!updatedDogs) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Dogs unable to be updated",
+          });
+        }
+        return updatedDogs;
       } catch (e) {
-        console.error("Couldn't update User");
+        console.error("Couldn't update Favorite Dogs");
       }
     }),
 });
