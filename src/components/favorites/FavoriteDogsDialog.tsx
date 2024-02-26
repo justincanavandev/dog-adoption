@@ -10,7 +10,6 @@ const FavoriteDogsDialog = () => {
 
   return (
     <>
-      {/* <div className="m-4 rounded-md"> */}
         {favoriteDogs.map((dog) => (
           <div
             key={`favoriteDog-${dog.id}`}
@@ -47,7 +46,6 @@ const FavoriteDogsDialog = () => {
             </button>
           </form>
         </>
-      {/* </div> */}
     </>
   );
 };

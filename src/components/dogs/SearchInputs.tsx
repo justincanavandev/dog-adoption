@@ -1,7 +1,7 @@
 // import LogOut from "./Logout"
 // import { fiftyStates } from "../fiftyStates"
 import { api } from "~/utils/api";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 // import { DogsContext } from "./context/DogContext"
 // import { DogSearch, DogLocationSearch } from "../types/types"
 // import { Location } from "../types/types"
@@ -11,6 +11,7 @@ import { fiftyStates } from "~/utils/helpers";
 import { DogContext } from "~/context/DogContext";
 import { isAgeValid } from "~/utils/type-guards";
 import { isStateValid } from "~/utils/type-guards";
+// import type { DogWithRelations } from "~/types/dog-types";
 
 const SearchInputs = () => {
   const {
@@ -40,15 +41,6 @@ const SearchInputs = () => {
     },
   );
 
-  const { data: dogById } = api.dog.getOneById.useQuery({
-    id: 66213666,
-  });
-
-  console.log("dogById", dogById);
-
-
-
-  const { mutate: addFavoriteDog } = api.favorites.create.useMutation({});
 
   const handleSearch = async () => {
     try {
@@ -68,10 +60,10 @@ const SearchInputs = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("stateSearch", stateSearch);
-    console.log("ageSearch", ageSearch);
-  }, [stateSearch, ageSearch]);
+  // useEffect(() => {
+  //   console.log("stateSearch", stateSearch);
+  //   console.log("ageSearch", ageSearch);
+  // }, [stateSearch, ageSearch]);
 
   return (
     <div className="flex flex-col items-start">
@@ -79,11 +71,11 @@ const SearchInputs = () => {
       <button
         onClick={() => {
           // const favoriteDog = { ...dogById, id: "ckja9sjja0000utdd6qpvwix5" };
-          dogById &&
-            addFavoriteDog({ dogId: dogById.id});
+          // dogById &&
+          //   addFavoriteDog({ dogId: dogById.id});
         }}
       >
-        addFavoriteDog
+        Add Favorite Dog
       </button>
 
       <>

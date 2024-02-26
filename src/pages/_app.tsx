@@ -31,7 +31,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
       try {
         const res: AxiosResponse<AuthOResponse> =
           await axios.get("/api/oauth-token");
-        // console.log("res", res);
         const data: AuthOResponse = res.data;
         const { access_token } = data;
         setAccessToken(access_token);
@@ -104,7 +103,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   //     setDogs(filteredDogs);
   //   }
   // }, [animalQuery]);
-  // // console.log("dogs", dogs);
+  // console.log("dogs", dogs);
 
   // const { mutate: addOneDog } = api.dog.createOne.useMutation({});
 
@@ -118,7 +117,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
           <main className={`${roboto.className}`}>
             {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
-            {/* Component is just whatever the current component is */}
             <Component {...pageProps} />
           </main>
         </AuthContext.Provider>

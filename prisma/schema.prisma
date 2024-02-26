@@ -77,22 +77,23 @@ model User {
 }
 
 model Dog {
-  name         String
-  age          String
-  breed        String
-  gender       String
-  id           Int           @id @unique
-  address      Address?
-  photos       Photo[]
-  favoriteDogs FavoriteDogs?
+  name    String
+  age     String
+  breed   String
+  gender  String
+  id      Int      @id @unique
+  address Address?
+  photos  Photo[]
+  // favoriteDogs FavoriteDogs?
 }
 
 model FavoriteDogs {
-  id     String @id @default(cuid())
+  // id     String @id @default(cuid())
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique
-  dog    Dog    @relation(fields: [dogId], references: [id])
-  dogId  Int    @unique
+  // dog    Dog?    @relation(fields: [dogId], references: [id])
+  // dogId  Int?    @unique
+  dogIds Int[]
 
   @@index(userId)
 }
