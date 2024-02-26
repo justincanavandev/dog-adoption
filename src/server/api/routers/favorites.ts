@@ -40,24 +40,23 @@ export const favoriteDogsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // const favoriteDogs = await ctx.db.favoriteDogs.findUnique({
-        //   where: {
-        //     userId: ctx.session.user.id,
-        //   },
-        // });
-        // console.log("favoriteDogs", favoriteDogs);
-
         const updatedDogs = await ctx.db.favoriteDogs.update({
           where: {
-            userId: ctx.session.user.id
+            userId: ctx.session.user.id,
           },
           data: {
-            dogIds: input.dogIds
-          }
-        })
-        return updatedDogs
+            dogIds: input.dogIds,
+          },
+        });
+        if (!updatedDogs) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Dog unable to be updated",
+          });
+        }
+        return updatedDogs;
       } catch (e) {
-        console.error("Couldn't update User");
+        console.error("Unable to update dog", e);
       }
     }),
 });
