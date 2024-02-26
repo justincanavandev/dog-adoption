@@ -22,6 +22,7 @@ export type DogContextType = {
   setBreedSearch: React.Dispatch<SetStateAction<string>>;
   sessionData: Session | null
   currentUser: User | undefined
+  favDogIds: number[]
 };
 
 export const DogContext = createContext({} as DogContextType);

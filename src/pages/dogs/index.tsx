@@ -2,7 +2,7 @@ import { api } from "~/utils/api";
 import Spinner from "~/components/Spinner";
 import Dogs from "~/components/dogs/Dogs";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+
 
 const DogPage = () => {
   const {
@@ -18,7 +18,6 @@ const DogPage = () => {
     data: currentUser,
     isLoading: isUserLoading,
     isError: isUserError,
-    isSuccess: isUserSuccess,
   } = api.user.getById.useQuery(
     { id: sessionData ? sessionData.user.id : "" },
     {
@@ -51,9 +50,7 @@ const DogPage = () => {
           favorites={
             favorites &&
             isFavoritesSuccess &&
-            !isFavoritesLoading &&
-            !isUserLoading &&
-            isUserSuccess
+            !isFavoritesLoading
               ? favorites
               : []
           }

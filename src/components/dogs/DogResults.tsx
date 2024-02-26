@@ -29,15 +29,11 @@ const DogResults = () => {
 
   //   const totalPages = Math.ceil(total / 25)
 
-  const {
-    dogs,
-    favoriteDogs,
-    setFavoriteDogs,
-    // selectedFavDog,
-    // setSelectedFavDog,
-  } = useContext(DogContext);
+  const { dogs, favoriteDogs, setFavoriteDogs, favDogIds } =
+    useContext(DogContext);
   const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
+  const utils = api.useUtils();
 
   // const { refetch: getDogById } = api.dog.getOneById.useQuery(
   //   {
@@ -56,20 +52,28 @@ const DogResults = () => {
     },
   );
 
-  const { mutate: addFavoriteDog } = api.favorites.create.useMutation({});
-  const { mutate: updateFavoriteDogs } = api.favorites.update.useMutation({});
+  const { mutate: addFavoriteDog } = api.favorites.create.useMutation({
+    onSuccess: async () => {
+      await utils.dog.getManyById.invalidate();
+    },
+  });
+  const { mutate: updateFavoriteDogs } = api.favorites.update.useMutation({
+    onSuccess: async () => {
+      await utils.user.getById.invalidate();
+    },
+  });
 
   const addToFavorites = (dog: DogWithRelations) => {
     if (favoriteDogs.includes(dog)) {
       console.log("You have already favorited this dog!");
-      return
+      return;
     } else {
       setFavoriteDogs([...favoriteDogs, dog]);
 
       if (currentUser) {
         if (currentUser.favorites) {
-          const { favorites } = currentUser;
-          const favDogIds = favorites.dogIds;
+          // const { favorites } = currentUser;
+          // const favDogIds = favorites.dogIds;
           updateFavoriteDogs({ dogIds: [...favDogIds, dog.id] });
         } else {
           addFavoriteDog({ dogIds: [dog.id] });
@@ -80,6 +84,9 @@ const DogResults = () => {
 
   const removeFromFavorites = (dog: DogWithRelations) => {
     const filteredDogs = favoriteDogs.filter((favDog) => dog.id !== favDog.id);
+    const filteredDogIds = favDogIds.filter((id) => dog.id !== id);
+
+    updateFavoriteDogs({ dogIds: filteredDogIds });
 
     setFavoriteDogs(filteredDogs);
   };
@@ -146,7 +153,10 @@ const DogResults = () => {
           <FavoriteDogsDialog />
         </dialog>
         {favoriteDogs.length > 0 && (
-          <button onClick={() => favoriteDialogRef.current?.showModal()}>
+          <button
+            className="absolute right-8"
+            onClick={() => favoriteDialogRef.current?.showModal()}
+          >
             View Favorites
           </button>
         )}
@@ -182,12 +192,12 @@ const DogResults = () => {
               <button
                 className="w-32 border border-black px-1"
                 onClick={() => {
-                  favoriteDogs.includes(dog)
+                  favDogIds.includes(dog.id)
                     ? removeFromFavorites(dog)
                     : addToFavorites(dog);
                 }}
               >
-                {favoriteDogs.includes(dog)
+                {favDogIds.includes(dog.id)
                   ? "Remove From Favorites"
                   : "Add To Favorites"}
               </button>

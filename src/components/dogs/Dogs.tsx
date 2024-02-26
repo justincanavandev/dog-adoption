@@ -23,6 +23,7 @@ const Dogs = ({ allDogs, favorites, sessionData, currentUser }: DogsProps) => {
   const [citySearch, setCitySearch] = useState<string>("");
   const [zipSearch, setZipSearch] = useState<string>("");
   const [breedSearch, setBreedSearch] = useState<string>("");
+  const favDogIds = currentUser?.favorites ? currentUser.favorites.dogIds : []
 
   useEffect(() => {
     if (currentUser?.favorites) {
@@ -50,6 +51,7 @@ const Dogs = ({ allDogs, favorites, sessionData, currentUser }: DogsProps) => {
         setBreedSearch,
         sessionData,
         currentUser,
+        favDogIds
       }}
     >
       <SearchInputs />
