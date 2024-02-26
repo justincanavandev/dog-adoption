@@ -4,7 +4,12 @@ const dogWithRelations = Prisma.validator<Prisma.DogDefaultArgs>()({
   include: { address: true, photos: true },
 });
 
+const userWithRelations = Prisma.validator<Prisma.UserDefaultArgs>()({
+  include: { favorites: true },
+});
+
 export type DogWithRelations = Prisma.DogGetPayload<typeof dogWithRelations>;
+export type UserWithRelations = Prisma.UserGetPayload<typeof userWithRelations>
 
 export type Age = "Baby" | "Young" | "Adult" | "Senior" | "";
 

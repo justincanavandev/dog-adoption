@@ -1,6 +1,8 @@
 import { createContext } from "react";
 import type { DogWithRelations, Age, State } from "~/types/dog-types";
 import type { SetStateAction } from "react";
+import type { Session } from "next-auth";
+import type { User } from "@prisma/client";
 
 export type DogContextType = {
   dogs: DogWithRelations[];
@@ -18,6 +20,8 @@ export type DogContextType = {
   setZipSearch: React.Dispatch<SetStateAction<string>>;
   breedSearch: string
   setBreedSearch: React.Dispatch<SetStateAction<string>>;
+  sessionData: Session | null
+  currentUser: User | undefined
 };
 
 export const DogContext = createContext({} as DogContextType);

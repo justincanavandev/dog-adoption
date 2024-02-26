@@ -175,10 +175,8 @@ export const dogRouter = createTRPCRouter({
           include: {
             photos: true,
             address: true,
-            // favorites: true,
           },
         });
-        // console.log('dog', dog)
         if (!dog) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -188,6 +186,38 @@ export const dogRouter = createTRPCRouter({
         return dog;
       } catch (e) {
         console.error("Unable to fetch dog", e);
+      }
+    }),
+  getManyById: protectedProcedure
+    .input(
+      z.object({
+        ids: z.array(z.number()),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const { ids } = input;
+        const dogs = await ctx.db.dog.findMany({
+          where: {
+            id: {
+              in: ids,
+            },
+          },
+          include: {
+            photos: true,
+            address: true,
+          },
+        });
+
+        if (!dogs) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Dogs unable to be fetched",
+          });
+        }
+        return dogs;
+      } catch (e) {
+        console.error("Unable to fetch dogs", e);
       }
     }),
 });
