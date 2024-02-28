@@ -6,7 +6,6 @@ import imgNotFound from "public/images/img-unavail.jpeg";
 
 const FavoriteDogsDialog = () => {
   const { favoriteDogs } = useContext(DogContext);
-  console.log("favoriteDogs", favoriteDogs);
 
   return (
     <div className="flex flex-col items-center relative  border-2 border-black">
