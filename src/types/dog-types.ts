@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import type { InfiniteData } from "@tanstack/react-query";
 
 const dogWithRelations = Prisma.validator<Prisma.DogDefaultArgs>()({
   include: { address: true, photos: true },
@@ -9,27 +10,33 @@ const userWithRelations = Prisma.validator<Prisma.UserDefaultArgs>()({
 });
 
 export type DogWithRelations = Prisma.DogGetPayload<typeof dogWithRelations>;
-export type UserWithRelations = Prisma.UserGetPayload<typeof userWithRelations>
+export type UserWithRelations = Prisma.UserGetPayload<typeof userWithRelations>;
 
 export type Age = "Baby" | "Young" | "Adult" | "Senior" | "";
 
 export type DogParams = {
   where: {
     address?: {
-      state?: State
-      city?: string
-      zipCode?: string
-    }
-    age?: Age
-    breed?: string
-
-  },
+      state?: State;
+      city?: string;
+      zipCode?: string;
+    };
+    age?: Age;
+    breed?: string;
+  };
   include: {
-    photos: true,
-    address: true
-  }
+    photos: true;
+    address: true;
+  };
+};
 
-}
+export type PaginatedDogData =
+  | InfiniteData<{
+      dogs: DogWithRelations[];
+      nextCursor: number | undefined;
+      totalDogs: number;
+    }>
+  | undefined;
 
 export type State =
   | "AL"

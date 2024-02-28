@@ -220,4 +220,36 @@ export const dogRouter = createTRPCRouter({
         console.error("Unable to fetch dogs", e);
       }
     }),
+  getPaginated: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number(),
+        cursor: z.number().nullish(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { limit, cursor } = input;
+
+      const totalDogs = await ctx.db.dog.count()
+
+      const dogs = await ctx.db.dog.findMany({
+        take: limit + 1,
+        cursor: cursor ? { id: cursor } : undefined,
+        include: {
+          photos: true,
+          address: true
+        }
+      },);
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (dogs.length > limit) {
+        const nextItem = dogs.pop();
+        nextCursor = nextItem?.id;
+      }
+      return {
+        dogs,
+        nextCursor,
+        totalDogs
+      };
+    }),
 });

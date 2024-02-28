@@ -1,4 +1,4 @@
-import { type MutableRefObject, useContext, useEffect, useRef } from "react";
+import { type MutableRefObject, useContext, useRef } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -8,49 +8,57 @@ import { capitalizeFirstLetter } from "~/utils/helpers";
 import type { DogWithRelations } from "~/types/dog-types";
 import FavoriteDogsDialog from "../favorites/FavoriteDogsDialog";
 import { api } from "~/utils/api";
-import { useSession } from "next-auth/react";
+import type {
+  FetchNextPageOptions,
+  InfiniteQueryObserverResult,
+} from "@tanstack/react-query";
+import type { TRPCClientErrorLike } from "@trpc/client";
+import type { TRPCErrorShape } from "@trpc/server/rpc";
 
-const DogResults = () => {
-  //   const {
-  //     currentPage,
-  //     setCurrentPage,
-  //     fetchFavoriteDogs,
-  //     favoriteDogsIds,
-  //     setFavoriteDogsIds,
-  //     nextParams,
-  //     setNextParams,
-  //     prevParams,
-  //     setPrevParams,
-  //     total,
-  //     filteredDogs,
-  //     locationArr,
-  //     fetchDogObjects,
-  //   } = useContext(DogsContext)
+type DogResultsProps = {
+  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<
+    InfiniteQueryObserverResult<
+      {
+        dogs: DogWithRelations[];
+        nextCursor: number | undefined;
+        totalDogs: number;
+      },
+      TRPCClientErrorLike<TRPCErrorShape>
+    >
+  >;
 
-  //   const totalPages = Math.ceil(total / 25)
+};
 
-  const { dogs, favoriteDogs, setFavoriteDogs, favDogIds } =
-    useContext(DogContext);
+const DogResults = ({ fetchNextPage }: DogResultsProps) => {
+  const {
+    currentUser,
+    favoriteDogs,
+    setFavoriteDogs,
+    favDogIds,
+    currentPage,
+    setCurrentPage,
+    paginatedDogData,
+  } = useContext(DogContext);
   const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
   const utils = api.useUtils();
 
-  // const { refetch: getDogById } = api.dog.getOneById.useQuery(
-  //   {
-  //     id: selectedFavDog ? selectedFavDog.id : 0,
-  //   },
-  //   {
-  //     enabled: false,
-  //   },
-  // );
-  const { data: sessionData } = useSession();
+  const paginatedDogs = paginatedDogData?.pages[currentPage]?.dogs;
+  const totalDogs = paginatedDogData?.pages[currentPage]?.totalDogs;
+  const totalPages = totalDogs ? Math.ceil(totalDogs / 10) : undefined;
 
-  const { data: currentUser } = api.user.getById.useQuery(
-    { id: sessionData ? sessionData.user.id : "" },
-    {
-      enabled: sessionData ? true : false,
-    },
-  );
+  const handleFetchNextPage = async () => {
+    await fetchNextPage();
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  const handleFetchPreviousPage = () => {
+    setCurrentPage((prev) => prev - 1);
+  };
+
+  // const paginatedDogData = paginatedDogs?.pages[currentPage]?.dogs;
+  const nextCursor = paginatedDogData?.pages[currentPage]?.nextCursor;
+  if (paginatedDogs?.length === 0) return null;
 
   const { mutate: addFavoriteDog } = api.favorites.create.useMutation({
     onSuccess: async () => {
@@ -72,8 +80,6 @@ const DogResults = () => {
 
       if (currentUser) {
         if (currentUser.favorites) {
-          // const { favorites } = currentUser;
-          // const favDogIds = favorites.dogIds;
           updateFavoriteDogs({ dogIds: [...favDogIds, dog.id] });
         } else {
           addFavoriteDog({ dogIds: [dog.id] });
@@ -91,54 +97,14 @@ const DogResults = () => {
     setFavoriteDogs(filteredDogs);
   };
 
-  useEffect(() => {
-    console.log("favoriteDogs", favoriteDogs);
-  }, [favoriteDogs]);
-
-  //   const fetchNext = async (nextParams: string): Promise<void> => {
-  //     let response: AxiosResponse<any, any> | undefined =
-  //       await fetchNextPage(nextParams)
-  //     if (response) {
-  //       const isResponse200 = responseCheck(response)
-  //       if (isResponse200) {
-  //         try {
-  //           await fetchDogObjects(response.data.resultIds)
-  //         } catch (error) {
-  //           console.error(`Couldn't fetch dog objects`, error)
-  //         }
-  //         if (response.data.next) {
-  //           setNextParams(response.data.next)
-  //         }
-  //         if (response.data.prev) {
-  //           setPrevParams(response.data.prev)
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   const fetchPrev = async (prevParams: string): Promise<void> => {
-  //     const response: AxiosResponse<any, any> | undefined =
-  //       await fetchPrevPage(prevParams)
-  //     if (response) {
-  //       const isResponse200 = responseCheck(response)
-  //       if (isResponse200) {
-  //         try {
-  //           await fetchDogObjects(response.data.resultIds)
-  //         } catch (error) {
-  //           console.error(`Couldn't fetch dog objects`, error)
-  //         }
-
-  //         if (response.data.next) {
-  //           setNextParams(response.data.next)
-  //         }
-  //         if (response.data.prev) {
-  //           setPrevParams(response.data.prev)
-  //         }
-  //       }
-  //     }
-  //   }
   // useEffect(() => {
-  //   console.log("dogs", allDogs);
+  //   console.log("favoriteDogs", favoriteDogs);
+  // }, [favoriteDogs]);
+
+  // useEffect(() => {
+  //   console.log("dogs", dogs);
+  //   console.log("pagiantedDogData", paginatedDogData);
+  //   console.log("paginatedDigs", paginatedDogs);
   // }, []);
 
   return (
@@ -161,7 +127,7 @@ const DogResults = () => {
           </button>
         )}
 
-        {dogs.map((dog) => (
+        {paginatedDogs?.map((dog) => (
           <div
             key={dog.id}
             className="mt-6 flex w-[45%] flex-col items-center justify-between rounded-md border-2 border-black"
@@ -206,29 +172,29 @@ const DogResults = () => {
         ))}
         {/* Pagination */}
 
-        {/* <div className="mb-2 flex w-full justify-evenly">
+        <div className="mb-2 flex w-full justify-evenly">
           <button
             className="border-2 border-black px-1"
-              onClick={() => {
-                setCurrentPage(currentPage - 1)
-                fetchPrev(prevParams)
-              }}
-              disabled={currentPage <= 0}
+            onClick={() => {
+              handleFetchPreviousPage();
+            }}
+            disabled={currentPage <= 0}
           >
             Prev Page
           </button>
-          <p>Page {currentPage + 1} of {totalPages}</p>
+          <p>
+            Page {currentPage + 1} of {totalPages}
+          </p>
           <button
             className="border-2 border-black px-1"
-              onClick={() => {
-                setCurrentPage(currentPage + 1)
-                fetchNext(nextParams)
-              }}
-              disabled={currentPage >= totalPages - 1}
+            onClick={() => {
+              void handleFetchNextPage();
+            }}
+            disabled={!nextCursor ? true : false}
           >
             Next page
           </button>
-        </div> */}
+        </div>
       </div>
     </>
   );

@@ -5,6 +5,8 @@ import DogResults from "./DogResults";
 import SearchInputs from "./SearchInputs";
 import type { Session } from "next-auth";
 import type { UserWithRelations } from "~/types/dog-types";
+import { api } from "~/utils/api";
+import Spinner from "../Spinner";
 
 type DogsProps = {
   allDogs: DogWithRelations[];
@@ -14,16 +16,30 @@ type DogsProps = {
 };
 
 const Dogs = ({ allDogs, favorites, sessionData, currentUser }: DogsProps) => {
-
   const [dogs, setDogs] = useState<DogWithRelations[]>(allDogs);
-  // const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
   const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
   const [ageSearch, setAgeSearch] = useState<Age>("");
   const [stateSearch, setStateSearch] = useState<State>("");
   const [citySearch, setCitySearch] = useState<string>("");
   const [zipSearch, setZipSearch] = useState<string>("");
   const [breedSearch, setBreedSearch] = useState<string>("");
-  const favDogIds = currentUser?.favorites ? currentUser.favorites.dogIds : []
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
+  const favDogIds = currentUser?.favorites ? currentUser.favorites.dogIds : [];
+
+  const {
+    data: paginatedDogData,
+    fetchNextPage,
+    isLoading: isPaginationLoading,
+    isSuccess: isPaginationSuccess,
+  } = api.dog.getPaginated.useInfiniteQuery(
+    {
+      limit: 10,
+    },
+    {
+      getNextPageParam: (prevPage) => prevPage.nextCursor,
+    },
+  );
 
   useEffect(() => {
     if (currentUser?.favorites) {
@@ -51,7 +67,10 @@ const Dogs = ({ allDogs, favorites, sessionData, currentUser }: DogsProps) => {
         setBreedSearch,
         sessionData,
         currentUser,
-        favDogIds
+        favDogIds,
+        currentPage,
+        setCurrentPage,
+        paginatedDogData,
       }}
     >
       <SearchInputs />
@@ -60,8 +79,10 @@ const Dogs = ({ allDogs, favorites, sessionData, currentUser }: DogsProps) => {
       )} */}
       {/* {matchedDog.id && <MatchedDog />} */}
       {/* {favoriteDogObjects.length > 0 && <FavoriteDogs />} */}
-
-      <DogResults />
+      {isPaginationLoading && <Spinner />}
+      {paginatedDogData && !isPaginationLoading && isPaginationSuccess && (
+        <DogResults fetchNextPage={fetchNextPage} />
+      )}
     </DogContext.Provider>
   );
 };

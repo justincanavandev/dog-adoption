@@ -26,7 +26,7 @@ const DogPage = () => {
   );
 
   const {
-    data: favorites,
+    data: favoriteDogs,
     isSuccess: isFavoritesSuccess,
     isLoading: isFavoritesLoading,
   } = api.dog.getManyById.useQuery(
@@ -37,7 +37,6 @@ const DogPage = () => {
   );
 
   return (
-    // <div className="mt-4 flex flex-col gap-2 ">
     <>
       {(isDogsLoading && isUserLoading) ||
         isDogsLoading ||
@@ -48,10 +47,10 @@ const DogPage = () => {
         <Dogs
           allDogs={allDogs}
           favorites={
-            favorites &&
+            favoriteDogs &&
             isFavoritesSuccess &&
             !isFavoritesLoading
-              ? favorites
+              ? favoriteDogs
               : []
           }
           sessionData={sessionData}
@@ -59,7 +58,7 @@ const DogPage = () => {
         />
       )}
     </>
-    // </div>
+
   );
 };
 
