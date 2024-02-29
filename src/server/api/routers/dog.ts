@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  // publicProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 import type { DogParams } from "~/types/dog-types";
 import { TRPCError } from "@trpc/server";
@@ -12,9 +12,10 @@ import { isAgeValid, isStateValid } from "~/utils/type-guards";
 import { isZipCodeValid } from "~/utils/helpers";
 
 export const dogRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     try {
       const dogs = await ctx.db.dog.findMany({
+        take: 10,
         include: {
           photos: true,
           address: true,
@@ -87,7 +88,7 @@ export const dogRouter = createTRPCRouter({
         console.error(e);
       }
     }),
-  getAllSearch: protectedProcedure
+  getAllSearch: publicProcedure
     .input(
       z.object({
         age: z.union([
@@ -110,12 +111,18 @@ export const dogRouter = createTRPCRouter({
           z.literal(""),
         ]),
         breed: z.string(),
+        limit: z.number(),
+        cursor: z.number().nullish(),
       }),
     )
     .query(async ({ ctx, input }) => {
+      const { limit, cursor } = input;
+
       try {
         console.log("input", input);
         const params: DogParams = {
+          take: limit + 1,
+          cursor: cursor ? { id: cursor } : undefined,
           where: {},
           include: {
             photos: true,
@@ -158,7 +165,16 @@ export const dogRouter = createTRPCRouter({
         }
 
         const dogs = await ctx.db.dog.findMany(params);
-        return dogs;
+
+        let nextCursor: typeof cursor | undefined = undefined;
+        if (dogs.length > limit) {
+          const nextItem = dogs.pop();
+          nextCursor = nextItem?.id;
+        }
+
+        const totalDogs = await ctx.db.dog.count();
+
+        return { dogs, nextCursor, totalDogs };
       } catch (e) {
         console.error("Unable to find dogs", e);
       }
@@ -230,16 +246,16 @@ export const dogRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { limit, cursor } = input;
 
-      const totalDogs = await ctx.db.dog.count()
+      const totalDogs = await ctx.db.dog.count();
 
       const dogs = await ctx.db.dog.findMany({
         take: limit + 1,
         cursor: cursor ? { id: cursor } : undefined,
         include: {
           photos: true,
-          address: true
-        }
-      },);
+          address: true,
+        },
+      });
 
       let nextCursor: typeof cursor | undefined = undefined;
       if (dogs.length > limit) {
@@ -249,7 +265,7 @@ export const dogRouter = createTRPCRouter({
       return {
         dogs,
         nextCursor,
-        totalDogs
+        totalDogs,
       };
     }),
 });

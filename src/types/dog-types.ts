@@ -15,6 +15,8 @@ export type UserWithRelations = Prisma.UserGetPayload<typeof userWithRelations>;
 export type Age = "Baby" | "Young" | "Adult" | "Senior" | "";
 
 export type DogParams = {
+  take: number;
+  cursor?: { id: number } | undefined;
   where: {
     address?: {
       state?: State;

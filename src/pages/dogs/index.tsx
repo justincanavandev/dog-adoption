@@ -5,12 +5,12 @@ import { useSession } from "next-auth/react";
 
 
 const DogPage = () => {
-  const {
-    data: allDogs,
-    isLoading: isDogsLoading,
-    isSuccess: isDogsSuccess,
-    isError: isDogsError,
-  } = api.dog.getAll.useQuery();
+  // const {
+  //   data: allDogs,
+  //   isLoading: isDogsLoading,
+  //   isSuccess: isDogsSuccess,
+  //   isError: isDogsError,
+  // } = api.dog.getAll.useQuery();
 
   const { data: sessionData } = useSession();
 
@@ -38,14 +38,14 @@ const DogPage = () => {
 
   return (
     <>
-      {(isDogsLoading && isUserLoading) ||
-        isDogsLoading ||
-        (isUserLoading && <Spinner fullscreen={true} />)}
-      {isDogsError && <div>Error fetching dogs!</div>}
+      {/* {(isDogsLoading && isUserLoading) ||
+        isDogsLoading || */}
+        {(isUserLoading && <Spinner fullscreen={true} />)}
+      {/* {isDogsError && <div>Error fetching dogs!</div>} */}
       {isUserError && <div>Error fetching user!</div>}
-      {isDogsSuccess && !isDogsLoading && allDogs && (
+      {/* {isDogsSuccess && !isDogsLoading && allDogs && ( */}
         <Dogs
-          allDogs={allDogs}
+          // allDogs={allDogs}
           favorites={
             favoriteDogs &&
             isFavoritesSuccess &&
@@ -56,7 +56,7 @@ const DogPage = () => {
           sessionData={sessionData}
           currentUser={currentUser}
         />
-      )}
+      {/* )} */}
     </>
 
   );

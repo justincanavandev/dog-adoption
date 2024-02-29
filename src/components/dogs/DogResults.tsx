@@ -1,4 +1,8 @@
-import { type MutableRefObject, useContext, useRef } from "react";
+import {
+  type MutableRefObject,
+  useContext,
+  useRef
+} from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -8,28 +12,8 @@ import { capitalizeFirstLetter } from "~/utils/helpers";
 import type { DogWithRelations } from "~/types/dog-types";
 import FavoriteDogsDialog from "../favorites/FavoriteDogsDialog";
 import { api } from "~/utils/api";
-import type {
-  FetchNextPageOptions,
-  InfiniteQueryObserverResult,
-} from "@tanstack/react-query";
-import type { TRPCClientErrorLike } from "@trpc/client";
-import type { TRPCErrorShape } from "@trpc/server/rpc";
 
-type DogResultsProps = {
-  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<
-    InfiniteQueryObserverResult<
-      {
-        dogs: DogWithRelations[];
-        nextCursor: number | undefined;
-        totalDogs: number;
-      },
-      TRPCClientErrorLike<TRPCErrorShape>
-    >
-  >;
-
-};
-
-const DogResults = ({ fetchNextPage }: DogResultsProps) => {
+const DogResults = () => {
   const {
     currentUser,
     favoriteDogs,
@@ -37,15 +21,18 @@ const DogResults = ({ fetchNextPage }: DogResultsProps) => {
     favDogIds,
     currentPage,
     setCurrentPage,
-    paginatedDogData,
+    dogData,
+    dogs,
+    fetchNextPage,
   } = useContext(DogContext);
   const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
   const utils = api.useUtils();
 
-  const paginatedDogs = paginatedDogData?.pages[currentPage]?.dogs;
-  const totalDogs = paginatedDogData?.pages[currentPage]?.totalDogs;
+  const totalDogs = dogData?.pages[currentPage]?.totalDogs;
   const totalPages = totalDogs ? Math.ceil(totalDogs / 10) : undefined;
+  const nextCursor = dogData?.pages[currentPage]?.nextCursor;
+  // if (paginatedDogs?.length === 0) return null;
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
@@ -55,10 +42,6 @@ const DogResults = ({ fetchNextPage }: DogResultsProps) => {
   const handleFetchPreviousPage = () => {
     setCurrentPage((prev) => prev - 1);
   };
-
-  // const paginatedDogData = paginatedDogs?.pages[currentPage]?.dogs;
-  const nextCursor = paginatedDogData?.pages[currentPage]?.nextCursor;
-  if (paginatedDogs?.length === 0) return null;
 
   const { mutate: addFavoriteDog } = api.favorites.create.useMutation({
     onSuccess: async () => {
@@ -97,16 +80,6 @@ const DogResults = ({ fetchNextPage }: DogResultsProps) => {
     setFavoriteDogs(filteredDogs);
   };
 
-  // useEffect(() => {
-  //   console.log("favoriteDogs", favoriteDogs);
-  // }, [favoriteDogs]);
-
-  // useEffect(() => {
-  //   console.log("dogs", dogs);
-  //   console.log("pagiantedDogData", paginatedDogData);
-  //   console.log("paginatedDigs", paginatedDogs);
-  // }, []);
-
   return (
     <>
       <Head>
@@ -127,7 +100,7 @@ const DogResults = ({ fetchNextPage }: DogResultsProps) => {
           </button>
         )}
 
-        {paginatedDogs?.map((dog) => (
+        {dogs?.map((dog) => (
           <div
             key={dog.id}
             className="mt-6 flex w-[45%] flex-col items-center justify-between rounded-md border-2 border-black"
