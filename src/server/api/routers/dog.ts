@@ -172,7 +172,14 @@ export const dogRouter = createTRPCRouter({
           nextCursor = nextItem?.id;
         }
 
-        const totalDogs = await ctx.db.dog.count();
+        let totalDogs;
+        if (Object.keys(where).length !== 0) {
+          const dogs = await ctx.db.dog.findMany({ where: where });
+          totalDogs = dogs.length;
+        } else {
+          totalDogs = await ctx.db.dog.count();
+        }
+      
 
         return { dogs, nextCursor, totalDogs };
       } catch (e) {

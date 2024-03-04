@@ -1,23 +1,26 @@
 import { createContext } from "react";
-import type { DogWithRelations, Age, State } from "~/types/dog-types";
+import type {
+  DogWithRelations,
+  Age,
+  State,
+  SearchTerms,
+  // DogData,
+} from "~/types/dog-types";
 import type { SetStateAction } from "react";
 import type { Session } from "next-auth";
 import type { UserWithRelations } from "~/types/dog-types";
 import type {
   FetchNextPageOptions,
   InfiniteQueryObserverResult,
-  RefetchOptions,
-  RefetchQueryFilters,
-  QueryObserverResult,
+  // RefetchOptions,
+  // RefetchQueryFilters,
+  // QueryObserverResult,
   InfiniteData,
 } from "@tanstack/react-query";
 import type { TRPCClientErrorLike } from "@trpc/client";
 import type { TRPCErrorShape } from "@trpc/server/rpc";
 
 export type DogContextType = {
-  dogs: DogWithRelations[];
-  setDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
-  // allDogs: DogWithRelations[] | undefined;
   favoriteDogs: DogWithRelations[];
   setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
   ageSearch: Age;
@@ -35,39 +38,53 @@ export type DogContextType = {
   favDogIds: number[];
   currentPage: number;
   setCurrentPage: React.Dispatch<SetStateAction<number>>;
-  refetchDogs: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
-  ) => Promise<
-    QueryObserverResult<
-      InfiniteData<
+  
+  isDogsLoading: boolean;
+  isDogsSuccess: boolean;
+  isDogsError: boolean;
+  // isDogsRefetching: boolean;
+  isFetchingNextPage: boolean;
+  searchTerms: SearchTerms;
+  setSearchTerms: React.Dispatch<SetStateAction<SearchTerms>>;
+  searchLimit: number
+  setSearchLimit: React.Dispatch<SetStateAction<number>>;
+  dogData:
+    | InfiniteData<
         | {
             dogs: DogWithRelations[];
             nextCursor: number | undefined;
             totalDogs: number;
           }
         | undefined
-      >,
-      TRPCClientErrorLike<TRPCErrorShape>
-    >
-  >;
-  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<
-    InfiniteQueryObserverResult<
-      | {
-          dogs: DogWithRelations[];
-          nextCursor: number | undefined;
-          totalDogs: number;
-        }
-      | undefined,
-      TRPCClientErrorLike<TRPCErrorShape>
-    >
-  >;
-  dogData: InfiniteData<{
-    dogs: DogWithRelations[]
-    nextCursor: number | undefined;
-    totalDogs: number;
-} | undefined> | undefined
+      >
+    | undefined;
+    // refetchDogs: <TPageData>(
+    //   options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
+    // ) => Promise<
+    //   QueryObserverResult<
+    //     InfiniteData<
+    //       | {
+    //           dogs: DogWithRelations[];
+    //           nextCursor: number | undefined;
+    //           totalDogs: number;
+    //         }
+    //       | undefined
+    //     >,
+    //     TRPCClientErrorLike<TRPCErrorShape>
+    //   >
+    // >;
+    fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<
+      InfiniteQueryObserverResult<
+        | {
+            dogs: DogWithRelations[];
+            nextCursor: number | undefined;
+            totalDogs: number;
+          }
+        | undefined,
+        TRPCClientErrorLike<TRPCErrorShape>
+      >
+    >;
 
 };
-
 
 export const DogContext = createContext({} as DogContextType);
