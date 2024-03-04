@@ -1,5 +1,12 @@
 import { Prisma } from "@prisma/client";
 import type { InfiniteData } from "@tanstack/react-query";
+import type { TRPCErrorShape } from "@trpc/server/rpc";
+import type { TRPCClientErrorLike } from "@trpc/client";
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+} from "@tanstack/react-query";
 
 const dogWithRelations = Prisma.validator<Prisma.DogDefaultArgs>()({
   include: { address: true, photos: true },
@@ -32,13 +39,64 @@ export type DogParams = {
   };
 };
 
-export type PaginatedDogData =
-  | InfiniteData<{
+export type SearchTerms = {
+  limit: number
+  age: string;
+  state: string;
+  city: string;
+  zipCode: string;
+  breed: string
+};
+
+export type RefetchResult = QueryObserverResult<
+  InfiniteData<
+    | {
+        dogs: DogWithRelations[];
+        nextCursor: number | undefined;
+        totalDogs: number;
+      }
+    | undefined
+  >,
+  TRPCClientErrorLike<TRPCErrorShape>
+>;
+
+export type RefetchDogs = <TPageData>(
+  options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
+) => Promise<
+  QueryObserverResult<
+    InfiniteData<
+      | {
+          dogs: DogWithRelations[];
+          nextCursor: number | undefined;
+          totalDogs: number;
+        }
+      | undefined
+    >,
+    TRPCClientErrorLike<TRPCErrorShape>
+  >
+>;
+
+export type PaginatedDogData = QueryObserverResult<
+  InfiniteData<
+    | {
+        dogs: DogWithRelations;
+
+        nextCursor: number | undefined;
+        totalDogs: number;
+      }
+    | undefined
+  >,
+  TRPCClientErrorLike<TRPCErrorShape>
+>;
+
+export type DogData = InfiniteData<
+  | {
       dogs: DogWithRelations[];
       nextCursor: number | undefined;
       totalDogs: number;
-    }>
-  | undefined;
+    }
+  | undefined
+>;
 
 export type State =
   | "AL"

@@ -5,12 +5,6 @@ import { useSession } from "next-auth/react";
 
 
 const DogPage = () => {
-  // const {
-  //   data: allDogs,
-  //   isLoading: isDogsLoading,
-  //   isSuccess: isDogsSuccess,
-  //   isError: isDogsError,
-  // } = api.dog.getAll.useQuery();
 
   const { data: sessionData } = useSession();
 
@@ -22,6 +16,7 @@ const DogPage = () => {
     { id: sessionData ? sessionData.user.id : "" },
     {
       enabled: !!sessionData,
+      staleTime: 5000 * 60
     },
   );
 
@@ -33,7 +28,9 @@ const DogPage = () => {
     {
       ids: currentUser?.favorites ? currentUser.favorites.dogIds : [],
     },
-    { enabled: !!sessionData && !!currentUser },
+    { enabled: !!sessionData && !!currentUser,
+      staleTime: 5000 * 60
+     },
   );
 
   return (
@@ -45,7 +42,6 @@ const DogPage = () => {
       {isUserError && <div>Error fetching user!</div>}
       {/* {isDogsSuccess && !isDogsLoading && allDogs && ( */}
         <Dogs
-          // allDogs={allDogs}
           favorites={
             favoriteDogs &&
             isFavoritesSuccess &&

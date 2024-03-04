@@ -4,37 +4,47 @@ import { DogContext } from "~/context/DogContext";
 import { isAgeValid } from "~/utils/type-guards";
 import { isStateValid } from "~/utils/type-guards";
 
+
 const SearchInputs = () => {
   const {
+    ageSearch,
     setAgeSearch,
+    stateSearch,
     setStateSearch,
     citySearch,
     setCitySearch,
-    // setDogs,
     zipSearch,
     setZipSearch,
     breedSearch,
     setBreedSearch,
     refetchDogs,
-    currentPage,
-    setDogs
+    // currentPage,
+    // setDogs,
+    // setDogData,
+    setSearchTerms,
+    setCurrentPage,
+    searchLimit,
+    setSearchLimit
   } = useContext(DogContext);
 
-
   const handleSearch = async () => {
-    try {
-      console.log("handleSearch", handleSearch);
-      const response = await refetchDogs();
-      const fetchedDogs = response.data?.pages[currentPage]?.dogs;
+    setCurrentPage(0);
+    setSearchTerms({
+      limit: searchLimit,
+      age: ageSearch,
+      state: stateSearch,
+      city: citySearch,
+      zipCode: zipSearch,
+      breed: breedSearch,
+      
+    });
 
-      if (fetchedDogs) {
-        setDogs(fetchedDogs);
-      }
+    try {
+      await refetchDogs();
     } catch (e) {
       console.error("Unable to fetch filtered dogs", e);
     }
   };
-
 
   return (
     <div className="flex flex-col items-start">
@@ -77,8 +87,9 @@ const SearchInputs = () => {
             onChange={(e) =>
               isStateValid(e.target.value) && setStateSearch(e.target.value)
             }
+            defaultValue="State"
           >
-            <option className="" disabled selected>
+            <option className="" disabled>
               State
             </option>
             {fiftyStates.map(
@@ -95,14 +106,20 @@ const SearchInputs = () => {
               isAgeValid(e.target.value) && setAgeSearch(e.target.value);
             }}
             className="w-36 border-2 border-black"
+            defaultValue="Age"
           >
-            <option disabled selected>
-              Age
-            </option>
+            <option disabled>Age</option>
             <option value="Baby">Baby</option>
             <option value="Young">Young</option>
             <option value="Adult">Adult</option>
             <option value="Senior">Senior</option>
+          </select>
+          <select onChange={(e)=> {
+            setSearchLimit(Number(e.target.value))
+          }} defaultValue={5} className="border-2 border-black">
+            <option value={3}>3</option>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
           </select>
           <div className="flex w-full justify-center">
             <button

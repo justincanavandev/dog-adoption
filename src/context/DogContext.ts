@@ -1,5 +1,11 @@
 import { createContext } from "react";
-import type { DogWithRelations, Age, State } from "~/types/dog-types";
+import type {
+  DogWithRelations,
+  Age,
+  State,
+  SearchTerms,
+  DogData,
+} from "~/types/dog-types";
 import type { SetStateAction } from "react";
 import type { Session } from "next-auth";
 import type { UserWithRelations } from "~/types/dog-types";
@@ -17,7 +23,6 @@ import type { TRPCErrorShape } from "@trpc/server/rpc";
 export type DogContextType = {
   dogs: DogWithRelations[];
   setDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
-  // allDogs: DogWithRelations[] | undefined;
   favoriteDogs: DogWithRelations[];
   setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
   ageSearch: Age;
@@ -61,13 +66,26 @@ export type DogContextType = {
       TRPCClientErrorLike<TRPCErrorShape>
     >
   >;
-  dogData: InfiniteData<{
-    dogs: DogWithRelations[]
-    nextCursor: number | undefined;
-    totalDogs: number;
-} | undefined> | undefined
-
+  dogData: DogData;
+  setDogData: React.Dispatch<SetStateAction<DogData>>;
+  isDogsLoading: boolean;
+  isDogsSuccess: boolean;
+  isDogsError: boolean;
+  isDogsRefetching: boolean;
+  newDogData:
+    | InfiniteData<
+        | {
+            dogs: DogWithRelations[];
+            nextCursor: number | undefined;
+            totalDogs: number;
+          }
+        | undefined
+      >
+    | undefined;
+  searchTerms: SearchTerms;
+  setSearchTerms: React.Dispatch<SetStateAction<SearchTerms>>;
+  searchLimit: number
+  setSearchLimit: React.Dispatch<SetStateAction<number>>;
 };
-
 
 export const DogContext = createContext({} as DogContextType);
