@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  useState,
-  useEffect
-} from "react";
+import { useState, useEffect } from "react";
 import type {
   DogWithRelations,
   Age,
   State,
   SearchTerms,
-  DogData,
+  // DogData,
 } from "~/types/dog-types";
 import { DogContext } from "~/context/DogContext";
 import DogResults from "./DogResults";
@@ -16,7 +13,6 @@ import SearchInputs from "./SearchInputs";
 import type { Session } from "next-auth";
 import type { UserWithRelations } from "~/types/dog-types";
 import { api } from "~/utils/api";
-import Spinner from "../Spinner";
 
 type DogsProps = {
   favorites: DogWithRelations[];
@@ -25,7 +21,6 @@ type DogsProps = {
 };
 
 const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
-  const [dogs, setDogs] = useState<DogWithRelations[]>([]);
   const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
   const [ageSearch, setAgeSearch] = useState<Age>("");
   const [stateSearch, setStateSearch] = useState<State>("");
@@ -33,11 +28,9 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
   const [zipSearch, setZipSearch] = useState<string>("");
   const [breedSearch, setBreedSearch] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [dogData, setDogData] = useState({} as DogData);
-  const [searchLimit, setSearchLimit] = useState(10)
-
+  const [searchLimit, setSearchLimit] = useState(5);
   const [searchTerms, setSearchTerms] = useState<SearchTerms>({
-    limit: 10, 
+    limit: 5,
     age: "",
     state: "",
     city: "",
@@ -48,12 +41,11 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
   const favDogIds = currentUser?.favorites ? currentUser.favorites.dogIds : [];
 
   const {
-    data: newDogData,
+    data: dogData,
     isLoading: isDogsLoading,
     isSuccess: isDogsSuccess,
     isError: isDogsError,
-    refetch: refetchDogs,
-    isRefetching: isDogsRefetching,
+    isFetchingNextPage,
     fetchNextPage,
   } = api.dog.getAllSearch.useInfiniteQuery(
     {
@@ -66,7 +58,7 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
     },
     {
       getNextPageParam: (prevPage) => prevPage?.nextCursor,
-      staleTime: 60 * 5000
+      staleTime: 60 * 5000,
     },
   );
 
@@ -79,8 +71,6 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
   return (
     <DogContext.Provider
       value={{
-        dogs,
-        setDogs,
         favoriteDogs,
         setFavoriteDogs,
         ageSearch,
@@ -98,20 +88,16 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
         favDogIds,
         currentPage,
         setCurrentPage,
-        refetchDogs,
         fetchNextPage,
-        isDogsRefetching,
         isDogsLoading,
         isDogsSuccess,
         isDogsError,
-        // searchTermRef,
         dogData,
-        setDogData,
-        newDogData,
         searchTerms,
         setSearchTerms,
         searchLimit,
-        setSearchLimit
+        setSearchLimit,
+        isFetchingNextPage,
       }}
     >
       {/* <Search /> */}
@@ -124,8 +110,7 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
       {/* {favoriteDogObjects.length > 0 && <FavoriteDogs />} */}
       {/* {isPaginationLoading && <Spinner />}
       {paginatedDogData && !isPaginationLoading && isPaginationSuccess && ( */}
-      {isDogsRefetching && <Spinner />}
-      {!isDogsLoading && <DogResults />}
+       <DogResults />
     </DogContext.Provider>
   );
 };

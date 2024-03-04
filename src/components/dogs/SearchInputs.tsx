@@ -17,10 +17,7 @@ const SearchInputs = () => {
     setZipSearch,
     breedSearch,
     setBreedSearch,
-    refetchDogs,
-    // currentPage,
-    // setDogs,
-    // setDogData,
+    // refetchDogs,
     setSearchTerms,
     setCurrentPage,
     searchLimit,
@@ -39,11 +36,11 @@ const SearchInputs = () => {
       
     });
 
-    try {
-      await refetchDogs();
-    } catch (e) {
-      console.error("Unable to fetch filtered dogs", e);
-    }
+    // try {
+    //   await refetchDogs();
+    // } catch (e) {
+    //   console.error("Unable to fetch filtered dogs", e);
+    // }
   };
 
   return (
