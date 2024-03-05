@@ -1,4 +1,4 @@
-import { type MutableRefObject, useContext, useRef, useEffect } from "react";
+import { type MutableRefObject, useContext, useRef } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -9,7 +9,6 @@ import type { DogWithRelations } from "~/types/dog-types";
 import FavoriteDogsDialog from "../favorites/FavoriteDogsDialog";
 import { api } from "~/utils/api";
 import Spinner from "../Spinner";
-import { useSession } from "next-auth/react";
 
 const DogResults = () => {
   const {
@@ -33,13 +32,6 @@ const DogResults = () => {
   const totalDogs = dogData?.pages[currentPage]?.totalDogs;
   const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : "";
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
-  const session = useSession();
-
-  console.log("session", session);
-
-  useEffect(() => {
-    console.log("currentUser", currentUser);
-  }, [currentUser]);
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
@@ -65,43 +57,24 @@ const DogResults = () => {
   //   },
   // });
 
-  const { mutate: updateUser } = api.user.updateUser.useMutation({
+  const { mutate: addToFavorites } = api.user.addToFavorites.useMutation({
     onSuccess: async () => {
       await utils.user.getById.invalidate();
     },
   });
 
-  const addToFavorites = (dog: DogWithRelations) => {
+  const handleAddToFavorites = (dog: DogWithRelations) => {
     if (favoriteDogs.includes(dog)) {
       console.log("You have already favorited this dog!");
       return;
     } else {
       setFavoriteDogs([...favoriteDogs, dog]);
 
-      if (session.data?.user && currentUser) {
-        if (!currentUser.favorites) {
-          updateUser({
-            userId: session.data?.user.id,
-            dogIds: [...favDogIds, dog.id],
-            favorites: currentUser.favorites,
-          });
-        } else {
-          updateUser({
-            dogIds: [...favDogIds, dog.id],
-            favorites: currentUser.favorites,
-          });
-        }
-        // console.log("currentUser", currentUser);
-        // if (currentUser.favorites) {
-        //   updateFavoriteDogs({
-        //     userId: currentUser.id,
-        //     dogIds: favDogIds ? [...favDogIds, dog.id] : [dog.id],
-        //   });
-        // } else {
-        //   console.log("dog.id", dog.id);
-        //   addFavoriteDog({ dogIds: [dog.id] });
-        //   console.log("currentUser.favorites", currentUser.favorites);
-        // }
+      if (currentUser) {
+        addToFavorites({
+          dogIds: [...favDogIds, dog.id],
+          favorites: currentUser.favorites,
+        });
       }
     }
   };
@@ -176,7 +149,7 @@ const DogResults = () => {
                   onClick={() => {
                     favDogIds.includes(dog.id)
                       ? removeFromFavorites(dog)
-                      : addToFavorites(dog);
+                      : handleAddToFavorites(dog);
                   }}
                 >
                   {favDogIds.includes(dog.id)

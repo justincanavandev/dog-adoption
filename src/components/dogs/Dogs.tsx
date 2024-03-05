@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useState, useEffect } from "react";
 import type {
   DogWithRelations,
@@ -61,7 +60,6 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
       staleTime: 60 * 5000,
     },
   );
-  console.log('currentUser Dogs comp', currentUser)
 
   useEffect(() => {
     if (currentUser?.favorites) {

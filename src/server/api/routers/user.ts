@@ -26,12 +26,10 @@ export const userRouter = createTRPCRouter({
       }
       return user;
     }),
-  updateUser: protectedProcedure
+  addToFavorites: protectedProcedure
     .input(
       z.object({
-        dogIds: z.number().array().optional(),
-        userId: z.string().optional(),
-
+        dogIds: z.number().array(),
         favorites: z
           .object({
             dogIds: z.number().array(),
@@ -42,45 +40,53 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
+        const userId = ctx.session.user.id;
         if (!input.favorites) {
           const favorites = await ctx.db.favoriteDogs.create({
-            data: { userId: ctx.session.user.id, dogIds: input.dogIds },
+            data: { userId, dogIds: input.dogIds },
           });
-
-          console.log("create favorites", favorites);
-
-          // return favorites;
 
           const updatedUser = await ctx.db.user.update({
             where: {
-              id: input.userId,
+              id: userId,
             },
             data: {
-              favorites: { connect: { userId: favorites.userId } },
+              favorites: { connect: { userId } },
             },
             include: {
               favorites: true,
             },
           });
-          console.log('create updatedUser', updatedUser)
-          return updatedUser;
+          if (favorites && updatedUser) {
+            return updatedUser;
+          } else {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "User unable to be updated",
+            });
+          }
         } else {
-          const { userId } = input.favorites;
           const { dogIds } = input;
-
 
           const updatedFavorites = await ctx.db.favoriteDogs.update({
             where: {
               userId,
             },
             data: {
-              dogIds: dogIds,
+              dogIds,
             },
           });
-          return updatedFavorites;
+          if (updatedFavorites) {
+            return updatedFavorites;
+          } else {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "User unable to be updated",
+            });
+          }
         }
       } catch (e) {
-        console.error(e);
+        console.error("There was an error updating the user!", e);
       }
     }),
 });

@@ -1,5 +1,4 @@
 import { api } from "~/utils/api";
-// import Spinner from "~/components/Spinner";
 import Dogs from "~/components/dogs/Dogs";
 import { useSession } from "next-auth/react";
 
@@ -14,7 +13,7 @@ const DogPage = () => {
     { id: sessionData ? sessionData.user.id : "" },
     {
       enabled: !!sessionData,
-      // staleTime: 5000 * 60,
+      staleTime: 5000 * 60,
     },
   );
 
