@@ -49,9 +49,12 @@ const DogResults = () => {
 
   const { mutate: addFavoriteDog } = api.favorites.create.useMutation({
     onSuccess: async () => {
-      console.log('success')
-      await utils.dog.getManyById.invalidate();
+    
       await utils.user.getById.invalidate();
+      await utils.dog.getManyById.invalidate();
+      console.log('success')
+      console.log('currentAftersuccess', currentUser)
+ 
     },
     onError: async () => {
       console.log('error')
