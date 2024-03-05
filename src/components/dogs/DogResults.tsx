@@ -62,10 +62,14 @@ const DogResults = () => {
       setFavoriteDogs([...favoriteDogs, dog]);
 
       if (currentUser) {
+        console.log('currentUser', currentUser)
         if (currentUser.favorites) {
+        
           updateFavoriteDogs({ dogIds: [...favDogIds, dog.id] });
         } else {
+          console.log('dog.id', dog.id)
           addFavoriteDog({ dogIds: [dog.id] });
+          console.log('currentUser.favorites', currentUser.favorites)
         }
       }
     }
