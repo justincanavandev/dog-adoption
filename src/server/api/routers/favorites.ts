@@ -57,6 +57,7 @@ export const favoriteDogsRouter = createTRPCRouter({
             message: "Dogs unable to be updated",
           });
         }
+        console.log('updatedDogs', updatedDogs)
         return updatedDogs;
       } catch (e) {
         console.error("Couldn't update Favorite Dogs");

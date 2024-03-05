@@ -9,6 +9,7 @@ import type { DogWithRelations } from "~/types/dog-types";
 import FavoriteDogsDialog from "../favorites/FavoriteDogsDialog";
 import { api } from "~/utils/api";
 import Spinner from "../Spinner";
+import { useSession } from "next-auth/react";
 
 const DogResults = () => {
   const {
@@ -32,6 +33,9 @@ const DogResults = () => {
   const totalDogs = dogData?.pages[currentPage]?.totalDogs;
   const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : "";
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
+  const session = useSession()
+
+  console.log('session', session)
 
   useEffect(()=> {
     console.log('currentUser', currentUser)
@@ -66,6 +70,10 @@ const DogResults = () => {
     },
   });
 
+  const {mutate: updateUser} = api.user.updateUser.useMutation({
+
+  })
+
   const addToFavorites = (dog: DogWithRelations) => {
     if (favoriteDogs.includes(dog)) {
       console.log("You have already favorited this dog!");
@@ -75,14 +83,14 @@ const DogResults = () => {
 
       if (currentUser) {
         console.log('currentUser', currentUser)
-        // if (currentUser.favorites) {
+        if (currentUser.favorites) {
         
           updateFavoriteDogs({userId: currentUser.id, dogIds: favDogIds? [...favDogIds, dog.id] : [dog.id] });
-        // } else {
-        //   console.log('dog.id', dog.id)
-        //   addFavoriteDog({ dogIds: [dog.id] });
-        //   console.log('currentUser.favorites', currentUser.favorites)
-        // }
+        } else {
+          console.log('dog.id', dog.id)
+          addFavoriteDog({ dogIds: [dog.id] });
+          console.log('currentUser.favorites', currentUser.favorites)
+        }
       }
     }
   };
@@ -104,6 +112,7 @@ const DogResults = () => {
       <div className="flex flex-wrap justify-center gap-4">
         <Link href="/">Go to Home Page</Link>
         <h2 className="w-full text-center text-[1.5rem]"> View All Dogs!</h2>
+        <button onClick={()=>session.data?.user.id && updateUser({userId: session.data?.user.id, dogIds: [66213685]})}>update user</button>
         <dialog ref={favoriteDialogRef} className="modal">
           <FavoriteDogsDialog />
         </dialog>
