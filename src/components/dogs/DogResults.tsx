@@ -1,4 +1,4 @@
-import { type MutableRefObject, useContext, useRef } from "react";
+import { type MutableRefObject, useContext, useRef, useEffect } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -32,6 +32,11 @@ const DogResults = () => {
   const totalDogs = dogData?.pages[currentPage]?.totalDogs;
   const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : "";
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
+
+  useEffect(()=> {
+    console.log('currentUser', currentUser)
+
+  }, [currentUser])
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
