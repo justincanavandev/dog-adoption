@@ -68,7 +68,6 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
       setFavoriteDogs(favorites);
     }
   }, [favorites, setFavoriteDogs, currentUser]);
-
   return (
     <DogContext.Provider
       value={{
