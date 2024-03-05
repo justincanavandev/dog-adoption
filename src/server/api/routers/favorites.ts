@@ -7,9 +7,11 @@ export const favoriteDogsRouter = createTRPCRouter({
     .input(
       z.object({
         dogIds: z.number().array(),
+
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log('ctx.session.user', ctx.session.user)
       try {
         const favorites = await ctx.db.favoriteDogs.create({
           data: {
@@ -23,6 +25,8 @@ export const favoriteDogsRouter = createTRPCRouter({
             message: "Favorites unable to be created",
           });
         }
+        console.log('favorites', favorites)
+        console.log('ctx.session.user', ctx.session.user)
         return favorites;
       } catch (e) {
         console.error(e);
@@ -32,6 +36,7 @@ export const favoriteDogsRouter = createTRPCRouter({
     .input(
       z.object({
         dogIds: z.number().array(),
+        userId: z.string()
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -42,6 +47,7 @@ export const favoriteDogsRouter = createTRPCRouter({
           },
           data: {
             dogIds: input.dogIds,
+            userId: input.userId
           },
         });
 

@@ -1,5 +1,5 @@
 import { api } from "~/utils/api";
-import Spinner from "~/components/Spinner";
+// import Spinner from "~/components/Spinner";
 import Dogs from "~/components/dogs/Dogs";
 import { useSession } from "next-auth/react";
 
@@ -8,8 +8,8 @@ const DogPage = () => {
 
   const {
     data: currentUser,
-    isLoading: isUserLoading,
-    isError: isUserError,
+    // isLoading: isUserLoading,
+    // isError: isUserError,
   } = api.user.getById.useQuery(
     { id: sessionData ? sessionData.user.id : "" },
     {
@@ -31,8 +31,8 @@ const DogPage = () => {
 
   return (
     <>
-      {isUserLoading && <Spinner fullscreen={true} />}
-      {isUserError && <div>Error fetching user!</div>}
+      {/* {isUserLoading && <Spinner fullscreen={true} />}
+      {isUserError && <div>Error fetching user!</div>} */}
       <Dogs
         favorites={
           favoriteDogs && isFavoritesSuccess && !isFavoritesLoading

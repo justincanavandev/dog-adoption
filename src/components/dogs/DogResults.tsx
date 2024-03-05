@@ -75,23 +75,23 @@ const DogResults = () => {
 
       if (currentUser) {
         console.log('currentUser', currentUser)
-        if (currentUser.favorites) {
+        // if (currentUser.favorites) {
         
-          updateFavoriteDogs({ dogIds: [...favDogIds, dog.id] });
-        } else {
-          console.log('dog.id', dog.id)
-          addFavoriteDog({ dogIds: [dog.id] });
-          console.log('currentUser.favorites', currentUser.favorites)
-        }
+          updateFavoriteDogs({userId: currentUser.id, dogIds: favDogIds? [...favDogIds, dog.id] : [dog.id] });
+        // } else {
+        //   console.log('dog.id', dog.id)
+        //   addFavoriteDog({ dogIds: [dog.id] });
+        //   console.log('currentUser.favorites', currentUser.favorites)
+        // }
       }
     }
   };
 
   const removeFromFavorites = (dog: DogWithRelations) => {
     const filteredDogs = favoriteDogs.filter((favDog) => dog.id !== favDog.id);
-    const filteredDogIds = favDogIds.filter((id) => dog.id !== id);
+    // const filteredDogIds = favDogIds.filter((id) => dog.id !== id);
 
-    updateFavoriteDogs({ dogIds: filteredDogIds });
+    // updateFavoriteDogs({ dogIds: filteredDogIds });
 
     setFavoriteDogs(filteredDogs);
   };
