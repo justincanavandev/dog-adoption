@@ -14,7 +14,7 @@ const DogPage = () => {
     { id: sessionData ? sessionData.user.id : "" },
     {
       enabled: !!sessionData,
-      staleTime: 5000 * 60,
+      // staleTime: 5000 * 60,
     },
   );
 
