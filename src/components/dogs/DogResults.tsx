@@ -23,7 +23,7 @@ const DogResults = () => {
     isDogsLoading,
     isFetchingNextPage,
     dogData,
-    searchLimit
+    searchLimit,
   } = useContext(DogContext);
   const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
@@ -33,14 +33,13 @@ const DogResults = () => {
   const totalDogs = dogData?.pages[currentPage]?.totalDogs;
   const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : "";
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
-  const session = useSession()
+  const session = useSession();
 
-  console.log('session', session)
+  console.log("session", session);
 
-  useEffect(()=> {
-    console.log('currentUser', currentUser)
-
-  }, [currentUser])
+  useEffect(() => {
+    console.log("currentUser", currentUser);
+  }, [currentUser]);
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
@@ -51,28 +50,26 @@ const DogResults = () => {
     setCurrentPage((prev) => prev - 1);
   };
 
-  const { mutate: addFavoriteDog } = api.favorites.create.useMutation({
-    onSuccess: async () => {
-    
-      await utils.user.getById.invalidate();
-      await utils.dog.getManyById.invalidate();
-      console.log('success')
-      console.log('currentAftersuccess', currentUser)
- 
-    },
-    onError: async () => {
-      console.log('error')
-    }
-  });
-  const { mutate: updateFavoriteDogs } = api.favorites.update.useMutation({
-    onSuccess: async () => {
-      await utils.user.getById.invalidate();
-    },
-  });
+  // const { mutate: addFavoriteDog } = api.favorites.create.useMutation({
+  //   onSuccess: async () => {
+  //     await utils.user.getById.invalidate();
+  //     await utils.dog.getManyById.invalidate();
+  //   },
+  //   onError: async () => {
+  //     console.log("error");
+  //   },
+  // });
+  // const { mutate: updateFavoriteDogs } = api.favorites.update.useMutation({
+  //   onSuccess: async () => {
+  //     await utils.user.getById.invalidate();
+  //   },
+  // });
 
-  const {mutate: updateUser} = api.user.updateUser.useMutation({
-
-  })
+  const { mutate: updateUser } = api.user.updateUser.useMutation({
+    onSuccess: async () => {
+      await utils.user.getById.invalidate();
+    },
+  });
 
   const addToFavorites = (dog: DogWithRelations) => {
     if (favoriteDogs.includes(dog)) {
@@ -81,16 +78,30 @@ const DogResults = () => {
     } else {
       setFavoriteDogs([...favoriteDogs, dog]);
 
-      if (currentUser) {
-        console.log('currentUser', currentUser)
-        if (currentUser.favorites) {
-        
-          updateFavoriteDogs({userId: currentUser.id, dogIds: favDogIds? [...favDogIds, dog.id] : [dog.id] });
+      if (session.data?.user && currentUser) {
+        if (!currentUser.favorites) {
+          updateUser({
+            userId: session.data?.user.id,
+            dogIds: [...favDogIds, dog.id],
+            favorites: currentUser.favorites,
+          });
         } else {
-          console.log('dog.id', dog.id)
-          addFavoriteDog({ dogIds: [dog.id] });
-          console.log('currentUser.favorites', currentUser.favorites)
+          updateUser({
+            dogIds: [...favDogIds, dog.id],
+            favorites: currentUser.favorites,
+          });
         }
+        // console.log("currentUser", currentUser);
+        // if (currentUser.favorites) {
+        //   updateFavoriteDogs({
+        //     userId: currentUser.id,
+        //     dogIds: favDogIds ? [...favDogIds, dog.id] : [dog.id],
+        //   });
+        // } else {
+        //   console.log("dog.id", dog.id);
+        //   addFavoriteDog({ dogIds: [dog.id] });
+        //   console.log("currentUser.favorites", currentUser.favorites);
+        // }
       }
     }
   };
@@ -112,7 +123,6 @@ const DogResults = () => {
       <div className="flex flex-wrap justify-center gap-4">
         <Link href="/">Go to Home Page</Link>
         <h2 className="w-full text-center text-[1.5rem]"> View All Dogs!</h2>
-        <button onClick={()=>session.data?.user.id && updateUser({userId: session.data?.user.id, dogIds: [66213685]})}>update user</button>
         <dialog ref={favoriteDialogRef} className="modal">
           <FavoriteDogsDialog />
         </dialog>
@@ -133,7 +143,7 @@ const DogResults = () => {
               key={dog.id}
               className="mt-6 flex h-auto w-[45%] flex-col items-center justify-between rounded-md border-2 border-black"
             >
-              { !isDogsLoading || !isFetchingNextPage ? (
+              {!isDogsLoading || !isFetchingNextPage ? (
                 <div className="flex w-full flex-col justify-between md:flex-row">
                   <div className="xs:text-[1.2rem] flex flex-col gap-1  pl-2">
                     <span>Name: {dog.name}</span>
