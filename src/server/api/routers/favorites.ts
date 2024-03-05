@@ -26,7 +26,7 @@ export const favoriteDogsRouter = createTRPCRouter({
           });
         }
         console.log('favorites', favorites)
-        console.log('ctx.session.user', ctx.session.user)
+        // console.log('ctx.session.user', ctx.session.user)
         return favorites;
       } catch (e) {
         console.error(e);
