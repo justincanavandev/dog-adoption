@@ -29,39 +29,55 @@ export const userRouter = createTRPCRouter({
   updateUser: protectedProcedure
     .input(
       z.object({
-        dogIds: z.number().array(),
-        userId: z.string(),
+        dogIds: z.number().array().optional(),
+        userId: z.string().optional(),
+
+        favorites: z
+          .object({
+            dogIds: z.number().array(),
+            userId: z.string(),
+          })
+          .nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const user = await ctx.db.user.findUnique({
-          where: {
-            id: input.userId,
-          },
-        });
-        if (user) {
+        if (!input.favorites) {
           const favorites = await ctx.db.favoriteDogs.create({
             data: { userId: ctx.session.user.id, dogIds: input.dogIds },
           });
 
-          console.log("favorites", favorites);
+          console.log("create favorites", favorites);
 
           // return favorites;
 
           const updatedUser = await ctx.db.user.update({
             where: {
-              id: user.id,
+              id: input.userId,
             },
             data: {
               favorites: { connect: { userId: favorites.userId } },
             },
             include: {
-              favorites: true
-            }
+              favorites: true,
+            },
           });
-          
-          return updatedUser
+          console.log('create updatedUser', updatedUser)
+          return updatedUser;
+        } else {
+          const { userId } = input.favorites;
+          const { dogIds } = input;
+
+
+          const updatedFavorites = await ctx.db.favoriteDogs.update({
+            where: {
+              userId,
+            },
+            data: {
+              dogIds: dogIds,
+            },
+          });
+          return updatedFavorites;
         }
       } catch (e) {
         console.error(e);
