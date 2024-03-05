@@ -73,7 +73,8 @@ model User {
   accounts      Account[]
   posts         Post[]
   sessions      Session[]
-  favorites     FavoriteDogs?
+  favorites     FavoriteDogs @relation(fields:[favoritesId], references: [id])
+  favoritesId   String @unique
 }
 
 model Dog {
@@ -88,8 +89,8 @@ model Dog {
 }
 
 model FavoriteDogs {
-  // id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
+  id     String @id @default(cuid())
+  user   User?
   userId String @unique
   // dog    Dog?    @relation(fields: [dogId], references: [id])
   // dogId  Int?    @unique
