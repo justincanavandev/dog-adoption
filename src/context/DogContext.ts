@@ -22,7 +22,7 @@ import type { TRPCErrorShape } from "@trpc/server/rpc";
 
 export type DogContextType = {
   favoriteDogs: DogWithRelations[];
-  setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
+  // setFavoriteDogs: React.Dispatch<SetStateAction<DogWithRelations[]>>;
   ageSearch: Age;
   setAgeSearch: React.Dispatch<SetStateAction<Age>>;
   stateSearch: State;

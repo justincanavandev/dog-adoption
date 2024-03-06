@@ -14,7 +14,6 @@ const DogResults = () => {
   const {
     currentUser,
     favoriteDogs,
-    setFavoriteDogs,
     favDogIds,
     currentPage,
     setCurrentPage,
@@ -42,24 +41,10 @@ const DogResults = () => {
     setCurrentPage((prev) => prev - 1);
   };
 
-  // const { mutate: addFavoriteDog } = api.favorites.create.useMutation({
-  //   onSuccess: async () => {
-  //     await utils.user.getById.invalidate();
-  //     await utils.dog.getManyById.invalidate();
-  //   },
-  //   onError: async () => {
-  //     console.log("error");
-  //   },
-  // });
-  // const { mutate: updateFavoriteDogs } = api.favorites.update.useMutation({
-  //   onSuccess: async () => {
-  //     await utils.user.getById.invalidate();
-  //   },
-  // });
-
-  const { mutate: addToFavorites } = api.user.addToFavorites.useMutation({
+  const { mutate: updateFavorites } = api.user.updateFavorites.useMutation({
     onSuccess: async () => {
       await utils.user.getById.invalidate();
+      await utils.dog.getManyById.invalidate();
     },
   });
 
@@ -68,10 +53,8 @@ const DogResults = () => {
       console.log("You have already favorited this dog!");
       return;
     } else {
-      setFavoriteDogs([...favoriteDogs, dog]);
-
       if (currentUser) {
-        addToFavorites({
+        updateFavorites({
           dogIds: [...favDogIds, dog.id],
           favorites: currentUser.favorites,
         });
@@ -80,12 +63,13 @@ const DogResults = () => {
   };
 
   const removeFromFavorites = (dog: DogWithRelations) => {
-    const filteredDogs = favoriteDogs.filter((favDog) => dog.id !== favDog.id);
-    // const filteredDogIds = favDogIds.filter((id) => dog.id !== id);
-
-    // updateFavoriteDogs({ dogIds: filteredDogIds });
-
-    setFavoriteDogs(filteredDogs);
+    const filteredIds = favDogIds.filter((id) => id !== dog.id);
+    if (currentUser) {
+      updateFavorites({
+        dogIds: filteredIds,
+        favorites: currentUser.favorites,
+      });
+    }
   };
 
   return (
@@ -161,30 +145,31 @@ const DogResults = () => {
           ))
         )}
         {/* Pagination */}
-
-        <div className="mb-2 flex w-full justify-evenly">
-          <button
-            className="border-2 border-black px-1"
-            onClick={() => {
-              handleFetchPreviousPage();
-            }}
-            disabled={currentPage <= 0}
-          >
-            Prev Page
-          </button>
-          <p>
-            Page {currentPage + 1} of {totalPages}
-          </p>
-          <button
-            className="border-2 border-black px-1"
-            onClick={() => {
-              void handleFetchNextPage();
-            }}
-            disabled={!nextCursor ? true : false}
-          >
-            Next page
-          </button>
-        </div>
+        {dogsToShow?.length !== 0 && (
+          <div className="mb-2 flex w-full justify-evenly">
+            <button
+              className="border-2 border-black px-1"
+              onClick={() => {
+                handleFetchPreviousPage();
+              }}
+              disabled={currentPage <= 0}
+            >
+              Prev Page
+            </button>
+            <p>
+              Page {currentPage + 1} of {totalPages}
+            </p>
+            <button
+              className="border-2 border-black px-1"
+              onClick={() => {
+                void handleFetchNextPage();
+              }}
+              disabled={!nextCursor ? true : false}
+            >
+              Next page
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
