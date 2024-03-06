@@ -26,7 +26,7 @@ export const userRouter = createTRPCRouter({
       }
       return user;
     }),
-  addToFavorites: protectedProcedure
+  updateFavorites: protectedProcedure
     .input(
       z.object({
         dogIds: z.number().array(),
@@ -89,4 +89,31 @@ export const userRouter = createTRPCRouter({
         console.error("There was an error updating the user!", e);
       }
     }),
+  // removeFromFavorites: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       dogIds: z.number().array(),
+  //     }),
+  //   )
+  //   .mutation(async ({ ctx, input }) => {
+  //     try {
+  //       const { dogIds } = input;
+  //       const userId = ctx.session.user.id;
+  //       const updatedFavorites = await ctx.db.favoriteDogs.update({
+  //         where: {
+  //           userId,
+  //         },
+  //         data: {
+  //           dogIds,
+  //         },
+          
+  //       });
+  //       if(!updatedFavorites) {
+  //         throw new TRPCError({
+  //           code: "BAD_REQUEST",
+  //           message: "Favorite unable to be deleted",
+  //         });
+  //       }
+  //     } catch (e) {}
+  //   }),
 });

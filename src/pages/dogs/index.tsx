@@ -33,7 +33,7 @@ const DogPage = () => {
       {/* {isUserLoading && <Spinner fullscreen={true} />}
       {isUserError && <div>Error fetching user!</div>} */}
       <Dogs
-        favorites={
+        favoriteDogs={
           favoriteDogs && isFavoritesSuccess && !isFavoritesLoading
             ? favoriteDogs
             : []

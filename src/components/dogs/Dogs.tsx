@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type {
   DogWithRelations,
   Age,
   State,
-  SearchTerms,
-  // DogData,
+  SearchTerms
 } from "~/types/dog-types";
 import { DogContext } from "~/context/DogContext";
 import DogResults from "./DogResults";
@@ -14,13 +13,12 @@ import type { UserWithRelations } from "~/types/dog-types";
 import { api } from "~/utils/api";
 
 type DogsProps = {
-  favorites: DogWithRelations[];
+  favoriteDogs: DogWithRelations[];
   sessionData: Session | null;
   currentUser: UserWithRelations | undefined;
 };
 
-const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
-  const [favoriteDogs, setFavoriteDogs] = useState<DogWithRelations[]>([]);
+const Dogs = ({ favoriteDogs, sessionData, currentUser }: DogsProps) => {
   const [ageSearch, setAgeSearch] = useState<Age>("");
   const [stateSearch, setStateSearch] = useState<State>("");
   const [citySearch, setCitySearch] = useState<string>("");
@@ -61,16 +59,10 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
     },
   );
 
-  useEffect(() => {
-    if (currentUser?.favorites) {
-      setFavoriteDogs(favorites);
-    }
-  }, [favorites, setFavoriteDogs, currentUser]);
   return (
     <DogContext.Provider
       value={{
         favoriteDogs,
-        setFavoriteDogs,
         ageSearch,
         setAgeSearch,
         stateSearch,
@@ -98,7 +90,6 @@ const Dogs = ({ favorites, sessionData, currentUser }: DogsProps) => {
         isFetchingNextPage,
       }}
     >
-      {/* <Search /> */}
 
       <SearchInputs />
       {/* {errorMessage && (
