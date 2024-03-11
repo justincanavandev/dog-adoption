@@ -4,12 +4,11 @@ import { capitalizeFirstLetter } from "~/utils/helpers";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
 
-const FavoriteDogsDialog = () => {
+const FavoriteDogs = () => {
   const { favoriteDogs } = useContext(DogContext);
 
   return (
-    <div className="flex flex-col items-center relative  border-2 border-black">
-      <h2 className="text-[1.7rem] text-center">Favorite Dogs!</h2>
+    <>
       {favoriteDogs.map((dog) => (
         <div
           key={`favoriteDog-${dog.id}`}
@@ -38,15 +37,8 @@ const FavoriteDogsDialog = () => {
           </div>
         </div>
       ))}
-      <>
-        <form className="absolute right-2" method="dialog">
-          <button className="btn hover:text-navy cursor-pointer rounded-md">
-            Close
-          </button>
-        </form>
       </>
-    </div>
   );
 };
 
-export default FavoriteDogsDialog;
+export default FavoriteDogs;

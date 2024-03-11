@@ -21,17 +21,23 @@ export type UserWithRelations = Prisma.UserGetPayload<typeof userWithRelations>;
 
 export type Age = "Baby" | "Young" | "Adult" | "Senior" | "";
 
+type CapsFiltering = {
+  contains: string
+  mode: "insensitive"
+
+}
+
 export type DogParams = {
   take: number;
   cursor?: { id: number } | undefined;
   where: {
     address?: {
       state?: State;
-      city?: string;
+      city?: CapsFiltering
       zipCode?: string;
     };
     age?: Age;
-    breed?: string;
+    breed?: string | CapsFiltering
   };
   include: {
     photos: true;

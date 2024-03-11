@@ -3,7 +3,7 @@ import type {
   DogWithRelations,
   Age,
   State,
-  SearchTerms
+  SearchTerms,
 } from "~/types/dog-types";
 import { DogContext } from "~/context/DogContext";
 import DogResults from "./DogResults";
@@ -28,11 +28,11 @@ const Dogs = ({ favoriteDogs, sessionData, currentUser }: DogsProps) => {
   const [searchLimit, setSearchLimit] = useState(5);
   const [searchTerms, setSearchTerms] = useState<SearchTerms>({
     limit: 5,
-    age: "",
-    state: "",
-    city: "",
-    zipCode: "",
-    breed: "",
+    age: ageSearch,
+    state: stateSearch,
+    city: citySearch,
+    zipCode: zipSearch,
+    breed: breedSearch,
   });
 
   const favDogIds = currentUser?.favorites ? currentUser.favorites.dogIds : [];
@@ -90,8 +90,8 @@ const Dogs = ({ favoriteDogs, sessionData, currentUser }: DogsProps) => {
         isFetchingNextPage,
       }}
     >
-
       <SearchInputs />
+      {/* {isDogsLoading && <Spinner fullscreen={true} />} */}
       {/* {errorMessage && (
         <div className="mt-4 w-full text-center">{errorMessage}</div>
       )} */}
@@ -99,7 +99,7 @@ const Dogs = ({ favoriteDogs, sessionData, currentUser }: DogsProps) => {
       {/* {favoriteDogObjects.length > 0 && <FavoriteDogs />} */}
       {/* {isPaginationLoading && <Spinner />}
       {paginatedDogData && !isPaginationLoading && isPaginationSuccess && ( */}
-       <DogResults />
+      <DogResults />
     </DogContext.Provider>
   );
 };

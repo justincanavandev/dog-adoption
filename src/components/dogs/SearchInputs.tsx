@@ -1,9 +1,11 @@
-import { useContext } from "react";
-import { fiftyStates } from "~/utils/helpers";
+import { useContext, useState, useRef, type MutableRefObject } from "react";
+import { fiftyStates, findBreedDuplicates } from "~/utils/helpers";
 import { DogContext } from "~/context/DogContext";
 import { isAgeValid } from "~/utils/type-guards";
 import { isStateValid } from "~/utils/type-guards";
-
+import { api } from "~/utils/api";
+import Dialog from "../base/Dialog";
+// import FavoriteDogs from "../dialogs/FavoriteDogs";
 
 const SearchInputs = () => {
   const {
@@ -17,38 +19,83 @@ const SearchInputs = () => {
     setZipSearch,
     breedSearch,
     setBreedSearch,
+    searchTerms,
     setSearchTerms,
     setCurrentPage,
     searchLimit,
-    setSearchLimit
+    setSearchLimit,
   } = useContext(DogContext);
+
+  const { data: allDogs } = api.dog.getAll.useQuery();
+  const breedDialogRef: MutableRefObject<HTMLDialogElement | null> =
+    useRef(null);
+  const [breedDuplicates, setBreedDuplicates] = useState<
+    (string | undefined)[]
+  >([]);
 
   const handleSearch = async () => {
     setCurrentPage(0);
-    setSearchTerms({
-      limit: searchLimit,
-      age: ageSearch,
-      state: stateSearch,
-      city: citySearch,
-      zipCode: zipSearch,
-      breed: breedSearch,
-      
-    });
 
+    if (allDogs) {
+      const breeds = findBreedDuplicates(allDogs, breedSearch);
+      if (breeds) {
+        setBreedDuplicates(breeds);
+        await new Promise((resolve) => {
+          breedDialogRef.current?.addEventListener("close", resolve, {
+            once: true,
+          });
+          breedDialogRef.current?.showModal();
+        });
+      } else {
+        setSearchTerms({
+          limit: searchLimit,
+          age: ageSearch,
+          state: stateSearch,
+          city: citySearch,
+          zipCode: zipSearch,
+          breed: breedSearch,
+        });
+      }
+    }
   };
+
+  const BreedDialog = () => (
+    <>
+      {breedDuplicates.length > 0 && (
+        <div>
+          <select
+            onChange={(e) => {
+              setSearchTerms({
+                ...searchTerms,
+                breed: e.target.value,
+              });
+              breedDialogRef.current?.close();
+            }}
+          >
+            {breedDuplicates.map((breed) => (
+              <option
+                key={breed}
+                value={breed}
+              >
+                {breed}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+    </>
+  );
 
   return (
     <div className="flex flex-col items-start">
       <h1 className="pl-4 text-[1.5rem]">Search for Dogs!</h1>
-      {/* <button
-        onClick={() => {
-          // const favoriteDog = { ...dogById, id: "ckja9sjja0000utdd6qpvwix5" };
-          // dogById &&
-          //   addFavoriteDog({ dogId: dogById.id});
-        }}
-      >
-        Add Favorite Dog
-      </button> */}
+
+      <dialog ref={breedDialogRef} className="modal">
+        <Dialog
+          title="Did you mean one of these?"
+          Component={<BreedDialog />}
+        />
+      </dialog>
 
       <>
         <div className="flex flex-wrap justify-center gap-2 pt-4">
@@ -105,9 +152,13 @@ const SearchInputs = () => {
             <option value="Adult">Adult</option>
             <option value="Senior">Senior</option>
           </select>
-          <select onChange={(e)=> {
-            setSearchLimit(Number(e.target.value))
-          }} defaultValue={5} className="border-2 border-black">
+          <select
+            onChange={(e) => {
+              setSearchLimit(Number(e.target.value));
+            }}
+            defaultValue={5}
+            className="border-2 border-black"
+          >
             <option value={3}>3</option>
             <option value={5}>5</option>
             <option value={10}>10</option>

@@ -6,9 +6,10 @@ import Link from "next/link";
 import Head from "next/head";
 import { capitalizeFirstLetter } from "~/utils/helpers";
 import type { DogWithRelations } from "~/types/dog-types";
-import FavoriteDogsDialog from "../favorites/FavoriteDogsDialog";
+import FavoriteDogs from "../dialogs/FavoriteDogs";
 import { api } from "~/utils/api";
 import Spinner from "../Spinner";
+import Dialog from "../base/Dialog";
 
 const DogResults = () => {
   const {
@@ -22,6 +23,7 @@ const DogResults = () => {
     isFetchingNextPage,
     dogData,
     searchLimit,
+    isDogsError
   } = useContext(DogContext);
   const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
@@ -29,7 +31,7 @@ const DogResults = () => {
 
   const dogsToShow = dogData?.pages[currentPage]?.dogs;
   const totalDogs = dogData?.pages[currentPage]?.totalDogs;
-  const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : "";
+  const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : 0;
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
 
   const handleFetchNextPage = async () => {
@@ -81,7 +83,7 @@ const DogResults = () => {
         <Link href="/">Go to Home Page</Link>
         <h2 className="w-full text-center text-[1.5rem]"> View All Dogs!</h2>
         <dialog ref={favoriteDialogRef} className="modal">
-          <FavoriteDogsDialog />
+          <Dialog title="Favorite Dogs!" Component={<FavoriteDogs/>}/>
         </dialog>
         {favoriteDogs.length > 0 && (
           <button
@@ -91,6 +93,8 @@ const DogResults = () => {
             View Favorites
           </button>
         )}
+        {isDogsLoading && <Spinner />}
+        {isDogsError || !isDogsLoading && !dogsToShow && <div>Error fetching dogs!</div>}
 
         {dogsToShow?.length === 0 ? (
           <div>No Dogs matched your search!</div>
@@ -145,7 +149,7 @@ const DogResults = () => {
           ))
         )}
         {/* Pagination */}
-        {dogsToShow?.length !== 0 && (
+        {dogsToShow?.length !== 0 && !isDogsLoading && dogsToShow && (
           <div className="mb-2 flex w-full justify-evenly">
             <button
               className="border-2 border-black px-1"
@@ -157,7 +161,8 @@ const DogResults = () => {
               Prev Page
             </button>
             <p>
-              Page {currentPage + 1} of {totalPages}
+              Page {currentPage + 1}
+              {totalPages > 0 && ` of ${totalPages}`}
             </p>
             <button
               className="border-2 border-black px-1"

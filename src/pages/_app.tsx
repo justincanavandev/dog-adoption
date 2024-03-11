@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
@@ -12,10 +8,11 @@ import "~/styles/globals.css";
 import { useState, useEffect } from "react";
 import type { AuthOResponse } from "~/types/auth-types";
 import { AuthContext } from "~/context/APIAuthContext";
-// import { useQuery } from "@tanstack/react-query";
+
 
 import { roboto } from "~/styles/fonts";
 import Layout from "~/components/layout/Layout";
+// import { useQuery } from "@tanstack/react-query";
 // import type { DogWithRelations } from "~/types/dog-types";
 // import type { Photo } from "@prisma/client";
 

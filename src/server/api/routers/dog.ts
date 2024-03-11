@@ -11,11 +11,11 @@ import { TRPCError } from "@trpc/server";
 import { isAgeValid, isStateValid } from "~/utils/type-guards";
 import { isZipCodeValid } from "~/utils/helpers";
 
+
 export const dogRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     try {
       const dogs = await ctx.db.dog.findMany({
-        take: 10,
         include: {
           photos: true,
           address: true,
@@ -73,7 +73,6 @@ export const dogRouter = createTRPCRouter({
             },
             address: {
               create: {
-                address1: input.address.address1,
                 address2: input.address.address2,
                 city: input.address.city,
                 zipCode: input.address.zipCode,
@@ -137,7 +136,11 @@ export const dogRouter = createTRPCRouter({
         }
 
         if (input.breed.length > 0) {
-          where.breed = input.breed;
+
+            where.breed = {
+              contains: input.breed, 
+              mode: "insensitive"
+            }
         }
 
         if (
@@ -149,7 +152,11 @@ export const dogRouter = createTRPCRouter({
         }
 
         if (input.city.length > 0 && where.address) {
-          where.address.city = input.city;
+
+          where.address.city = {
+            contains: input.city, 
+            mode: "insensitive"
+          }
         }
 
         if (
@@ -179,7 +186,6 @@ export const dogRouter = createTRPCRouter({
         } else {
           totalDogs = await ctx.db.dog.count();
         }
-      
 
         return { dogs, nextCursor, totalDogs };
       } catch (e) {
