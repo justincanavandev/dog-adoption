@@ -27,20 +27,21 @@ const SearchInputs = () => {
   } = useContext(DogContext);
 
   // const { data: allDogs } = api.dog.getAll.useQuery();
-  const { refetch: refetchAllDogs } = api.dog.getAll.useQuery();
+  const { refetch: refetchAllBreeds } = api.dog.getAllBreeds.useQuery();
   const breedDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
   const [breedDuplicates, setBreedDuplicates] = useState<
-    (string | undefined)[]
+    (string)[]
   >([]);
+
 
   const handleSearch = async () => {
     setCurrentPage(0);
 
     if (breedSearch) {
-      const fetchedDogs = await refetchAllDogs();
-      if (fetchedDogs?.data) {
-        const breeds = findBreedDuplicates(fetchedDogs.data, breedSearch);
+      const fetchedBreeds = await refetchAllBreeds();
+      if (fetchedBreeds?.data) {
+        const breeds = findBreedDuplicates(fetchedBreeds.data, breedSearch);
         if (breeds) {
           setBreedDuplicates(breeds);
           await new Promise((resolve) => {

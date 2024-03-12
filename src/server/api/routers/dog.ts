@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { removeDuplicates } from "~/utils/helpers";
 
 import {
   createTRPCRouter,
@@ -10,7 +11,6 @@ import { TRPCError } from "@trpc/server";
 
 import { isAgeValid, isStateValid } from "~/utils/type-guards";
 import { isZipCodeValid } from "~/utils/helpers";
-
 
 export const dogRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -24,6 +24,29 @@ export const dogRouter = createTRPCRouter({
       return dogs;
     } catch (e) {
       console.error("Dogs unable to be fetched", e);
+    }
+  }),
+  getAllBreeds: publicProcedure.query(async ({ ctx }) => {
+    try {
+      const breeds = await ctx.db.dog.findMany({
+        select: {
+          breed: true,
+        },
+      });
+
+      if (breeds) {
+        const arrOfBreeds = breeds.map((breed) => breed.breed);
+        const arrOfBreedsNoDups = removeDuplicates(arrOfBreeds);
+
+        return arrOfBreedsNoDups;
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Breeds unable to be fetched",
+        });
+      }
+    } catch (e) {
+      console.error("Breeds unable to be fetched!");
     }
   }),
   createOne: protectedProcedure
@@ -81,7 +104,6 @@ export const dogRouter = createTRPCRouter({
             },
           },
         });
-        console.log("dogs", dogs);
         return dogs;
       } catch (e) {
         console.error(e);
@@ -136,11 +158,10 @@ export const dogRouter = createTRPCRouter({
         }
 
         if (input.breed.length > 0) {
-
-            where.breed = {
-              contains: input.breed, 
-              mode: "insensitive"
-            }
+          where.breed = {
+            contains: input.breed,
+            mode: "insensitive",
+          };
         }
 
         if (
@@ -152,11 +173,10 @@ export const dogRouter = createTRPCRouter({
         }
 
         if (input.city.length > 0 && where.address) {
-
           where.address.city = {
-            contains: input.city, 
-            mode: "insensitive"
-          }
+            contains: input.city,
+            mode: "insensitive",
+          };
         }
 
         if (

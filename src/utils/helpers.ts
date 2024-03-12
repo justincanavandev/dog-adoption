@@ -1,5 +1,3 @@
-import type { Dog } from "@prisma/client";
-
 export const capitalizeFirstLetter = (word: string) => {
   if (!word.includes(" ")) {
     const firstLetter = word.charAt(0);
@@ -29,43 +27,32 @@ export const isZipCodeValid = (str: string) => /^\d{5}(-\d{4})?$/.test(str);
 
 export const removeDuplicates = <T>(data: T[]) => [...new Set(data)];
 
-export const findBreedDuplicates = (dogs: Dog[], userInput: string) => {
-  const breedIndices: number[] = [];
+export const findBreedDuplicates = (breeds: string[], userInput: string) => {
   const takeOutCharacters = (breed: string) => {
     return breed
       .replace(/[\s~`!@#$%^&*(){}\[\];:"'<,.>?\/\\|_+=-]/g, "")
       .toLowerCase();
   };
-  const lowercaseBreeds: string[] = dogs.map((dog) =>
-    takeOutCharacters(dog.breed),
-  );
 
-  const breedMatches = lowercaseBreeds.filter(
-    (breed) => breed === takeOutCharacters(userInput),
+  const breedMatches = breeds.filter(
+    (breed) => takeOutCharacters(breed) === takeOutCharacters(userInput),
   );
+  const breedArr: string[] = [];
 
   if (breedMatches.length === 0) {
-    const breedArr: string[] = [];
-    const breedIncludes = lowercaseBreeds.filter((breed, index) => {
+    const breedIncludes = breeds.filter((breed, index) => {
       const result =
-        breed.includes(takeOutCharacters(userInput)) ||
-        takeOutCharacters(userInput).includes(breed);
+        takeOutCharacters(breed).includes(takeOutCharacters(userInput)) ||
+        takeOutCharacters(userInput).includes(takeOutCharacters(breed));
 
       if (result && !breedArr.includes(breed)) {
-        breedIndices.push(index);
         breedArr.push(breed);
-        return result;
+        return breeds[index];
       }
     });
-    if (breedIndices.length > 0 && breedIncludes.length > 0) {
-      const breeds = breedIndices
-        .map((index) => (dogs[index] ? dogs[index]?.breed : undefined))
-        .filter((breed) => typeof breed !== undefined);
-
-      return breeds;
-    } else {
-      return undefined;
-    }
+    return breedIncludes;
+  } else {
+    return undefined;
   }
 };
 
