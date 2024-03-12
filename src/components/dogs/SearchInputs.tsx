@@ -26,7 +26,8 @@ const SearchInputs = () => {
     setSearchLimit,
   } = useContext(DogContext);
 
-  const { data: allDogs } = api.dog.getAll.useQuery();
+  // const { data: allDogs } = api.dog.getAll.useQuery();
+  const { refetch: refetchAllDogs } = api.dog.getAll.useQuery();
   const breedDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
   const [breedDuplicates, setBreedDuplicates] = useState<
@@ -36,25 +37,28 @@ const SearchInputs = () => {
   const handleSearch = async () => {
     setCurrentPage(0);
 
-    if (allDogs) {
-      const breeds = findBreedDuplicates(allDogs, breedSearch);
-      if (breeds) {
-        setBreedDuplicates(breeds);
-        await new Promise((resolve) => {
-          breedDialogRef.current?.addEventListener("close", resolve, {
-            once: true,
+    if (breedSearch) {
+      const fetchedDogs = await refetchAllDogs();
+      if (fetchedDogs?.data) {
+        const breeds = findBreedDuplicates(fetchedDogs.data, breedSearch);
+        if (breeds) {
+          setBreedDuplicates(breeds);
+          await new Promise((resolve) => {
+            breedDialogRef.current?.addEventListener("close", resolve, {
+              once: true,
+            });
+            breedDialogRef.current?.showModal();
           });
-          breedDialogRef.current?.showModal();
-        });
-      } else {
-        setSearchTerms({
-          limit: searchLimit,
-          age: ageSearch,
-          state: stateSearch,
-          city: citySearch,
-          zipCode: zipSearch,
-          breed: breedSearch,
-        });
+        } else {
+          setSearchTerms({
+            limit: searchLimit,
+            age: ageSearch,
+            state: stateSearch,
+            city: citySearch,
+            zipCode: zipSearch,
+            breed: breedSearch,
+          });
+        }
       }
     }
   };
@@ -73,10 +77,7 @@ const SearchInputs = () => {
             }}
           >
             {breedDuplicates.map((breed) => (
-              <option
-                key={breed}
-                value={breed}
-              >
+              <option key={breed} value={breed}>
                 {breed}
               </option>
             ))}
