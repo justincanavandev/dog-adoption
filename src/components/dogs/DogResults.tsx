@@ -2,7 +2,7 @@ import { type MutableRefObject, useContext, useRef } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
-import Link from "next/link";
+// import Link from "next/link";
 import Head from "next/head";
 import { capitalizeFirstLetter } from "~/utils/helpers";
 import type { DogWithRelations } from "~/types/dog-types";
@@ -10,6 +10,7 @@ import FavoriteDogs from "../dialogs/FavoriteDogs";
 import { api } from "~/utils/api";
 import Spinner from "../Spinner";
 import Dialog from "../base/Dialog";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 const DogResults = () => {
   const {
@@ -23,7 +24,7 @@ const DogResults = () => {
     isFetchingNextPage,
     dogData,
     searchLimit,
-    isDogsError
+    isDogsError,
   } = useContext(DogContext);
   const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
@@ -79,22 +80,21 @@ const DogResults = () => {
       <Head>
         <title>Search for Dogs!</title>
       </Head>
-      <div className="flex flex-wrap justify-center gap-4">
-        <Link href="/">Go to Home Page</Link>
-        <h2 className="w-full text-center text-[1.5rem]"> View All Dogs!</h2>
+      <div className="mt-4 flex flex-wrap justify-center gap-4">
+        {/* <Link href="/">Go to Home Page</Link> */}
+        <h2 className="w-full text-center text-[1.5rem] mt-4"> Find Your Match!</h2>
         <dialog ref={favoriteDialogRef} className="modal">
-          <Dialog title="Favorite Dogs!" Component={<FavoriteDogs/>}/>
+          <Dialog title="Favorite Dogs!" Component={<FavoriteDogs remove={removeFromFavorites} add={handleAddToFavorites} />} />
         </dialog>
         {favoriteDogs.length > 0 && (
-          <button
-            className="absolute right-8"
+          <FaHeart
+            className="absolute right-4 top-2 text-[2rem] text-red-400 cursor-pointer"
             onClick={() => favoriteDialogRef.current?.showModal()}
-          >
-            View Favorites
-          </button>
+          ></FaHeart>
         )}
         {isDogsLoading && <Spinner />}
-        {isDogsError || !isDogsLoading && !dogsToShow && <div>Error fetching dogs!</div>}
+        {isDogsError ||
+          (!isDogsLoading && !dogsToShow && <div>Error fetching dogs!</div>)}
 
         {dogsToShow?.length === 0 ? (
           <div>No Dogs matched your search!</div>
@@ -102,48 +102,68 @@ const DogResults = () => {
           dogsToShow?.map((dog) => (
             <div
               key={dog.id}
-              className="mt-6 flex h-auto w-[45%] flex-col items-center justify-between rounded-md border-2 border-black"
+              className={`relative flex h-auto max-w-[270px] flex-col items-center justify-between overflow-hidden rounded-md border xs:w-[90%] sm:w-[50%]`}
             >
               {!isDogsLoading || !isFetchingNextPage ? (
-                <div className="flex w-full flex-col justify-between md:flex-row">
-                  <div className="xs:text-[1.2rem] flex flex-col gap-1  pl-2">
-                    <span>Name: {dog.name}</span>
-                    <span>Breed: {dog.breed}</span>
-                    <span>Age: {dog.age}</span>
-                    <span className="">
-                      Address:{" "}
-                      {dog.address?.address1 && `${dog.address.address1}, `}
-                      {dog.address?.city &&
-                        `${capitalizeFirstLetter(dog.address.city)}, `}
-                      {dog.address?.state &&
-                        `${dog.address.state.toUpperCase()}, `}
-                      {dog.address?.zipCode && dog.address.zipCode}
-                    </span>
-                  </div>
+                <>
                   <Image
-                    alt="dog photo"
-                    width={300}
-                    height={400}
-                    className="xs:h-48 xs:w-36 mx-auto h-40 w-[7.5rem] rounded-md object-cover sm:h-60 sm:w-[11.25rem] md:m-1 lg:h-72 lg:w-[13.5rem]"
+                    alt={`Image of ${dog.name}, ${dog.breed}`}
+                    height={270}
+                    width={270}
+                    style={{
+                      objectFit: "cover",
+                      maxHeight: "270px",
+                      maxWidth: "270px",
+                    }}
+
+                    quality={100}
+                    className="rounded-lg"
                     src={dog.photos[0] ? dog.photos[0].medium : imgNotFound}
                   ></Image>
-                </div>
+
+                  <div className="flex h-full max-w-[270px] flex-col justify-around gap-1 pl-2 text-center xs:text-[1.2rem]">
+                    <div className="mt-2 flex flex-col items-center">
+                      <h3 className="w-full truncate text-center text-[1.8rem]">
+                        {dog.name}
+                      </h3>
+                      <span className="max-w-full truncate">{`\u2022 ${dog.breed}`}</span>
+                      <span>{`\u2022 ${dog.age}`}</span>
+                      {/* <span className="truncate">
+                   
+                        {dog.address?.address1 &&
+                          `\u2022 ${dog.address.address1},`}
+                      </span> */}
+                      <span className="w-full truncate">
+                        {dog.address?.city &&
+                          `\u2022 ${capitalizeFirstLetter(dog.address.city)}, `}
+                        {dog.address?.state &&
+                          ` ${dog.address.state.toUpperCase()}, `}
+                        {dog.address?.zipCode && dog.address.zipCode}
+                      </span>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <Spinner />
               )}
               <div className="my-2 flex w-full flex-col items-center gap-1">
-                <button
-                  className="w-32 border border-black px-1"
-                  onClick={() => {
-                    favDogIds.includes(dog.id)
-                      ? removeFromFavorites(dog)
-                      : handleAddToFavorites(dog);
-                  }}
-                >
-                  {favDogIds.includes(dog.id)
-                    ? "Remove From Favorites"
-                    : "Add To Favorites"}
-                </button>
+                <div className="absolute right-2  top-2 cursor-pointer rounded-full bg-white p-2 text-[1.3rem] text-red-500 opacity-75 sm:text-[1.4rem] ">
+                  {favDogIds.includes(dog.id) ? (
+                    <FaHeart
+                      onClick={() => {
+                        removeFromFavorites(dog);
+                      }}
+                      className=""
+                    />
+                  ) : (
+                    <FaRegHeart
+                      onClick={() => {
+                        handleAddToFavorites(dog);
+                      }}
+                      className=""
+                    />
+                  )}
+                </div>
               </div>
             </div>
           ))

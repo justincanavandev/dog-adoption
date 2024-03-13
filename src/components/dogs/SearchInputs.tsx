@@ -30,15 +30,14 @@ const SearchInputs = () => {
   const { refetch: refetchAllBreeds } = api.dog.getAllBreeds.useQuery();
   const breedDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
-  const [breedDuplicates, setBreedDuplicates] = useState<
-    (string)[]
-  >([]);
-
+  const [breedDuplicates, setBreedDuplicates] = useState<string[]>([]);
 
   const handleSearch = async () => {
+    console.log("yes");
     setCurrentPage(0);
 
     if (breedSearch) {
+      console.log("breedSearch", breedSearch);
       const fetchedBreeds = await refetchAllBreeds();
       if (fetchedBreeds?.data) {
         const breeds = findBreedDuplicates(fetchedBreeds.data, breedSearch);
@@ -50,17 +49,17 @@ const SearchInputs = () => {
             });
             breedDialogRef.current?.showModal();
           });
-        } else {
-          setSearchTerms({
-            limit: searchLimit,
-            age: ageSearch,
-            state: stateSearch,
-            city: citySearch,
-            zipCode: zipSearch,
-            breed: breedSearch,
-          });
         }
       }
+    } else {
+      setSearchTerms({
+        limit: searchLimit,
+        age: ageSearch,
+        state: stateSearch,
+        city: citySearch,
+        zipCode: zipSearch,
+        breed: breedSearch,
+      });
     }
   };
 
@@ -89,7 +88,7 @@ const SearchInputs = () => {
   );
 
   return (
-    <div className="flex flex-col items-start">
+    <div className="flex flex-col mt-16 items-center">
       <h1 className="pl-4 text-[1.5rem]">Search for Dogs!</h1>
 
       <dialog ref={breedDialogRef} className="modal">
@@ -100,72 +99,76 @@ const SearchInputs = () => {
       </dialog>
 
       <>
-        <div className="flex flex-wrap justify-center gap-2 pt-4">
+        <div className="flex flex-col border max-w-[600px] rounded-md items-center gap-2 py-4 xs:flex-row xs:flex-wrap xs:justify-center">
           <input
-            className="border-2 border-black "
+            className="w-[14rem] pl-1 border-2 border-black "
             type="text"
             placeholder="Breed"
             value={breedSearch}
             onChange={(e) => setBreedSearch(e.target.value)}
           />
           <input
-            className="border-2 border-black"
+            className="w-[14rem] pl-1 border-2 border-black"
             type="text"
             placeholder="City"
             value={citySearch}
             onChange={(e) => setCitySearch(e.target.value)}
           />
-          <input
-            className="border-2 border-black"
-            type="text"
-            placeholder="Zip Code"
-            value={zipSearch}
-            onChange={(e) => setZipSearch(e.target.value)}
-          />
-          <select
-            className="border-2 border-black"
-            onChange={(e) =>
-              isStateValid(e.target.value) && setStateSearch(e.target.value)
-            }
-            defaultValue="State"
-          >
-            <option className="" disabled>
-              State
-            </option>
-            {fiftyStates.map(
-              (state) =>
-                state.length > 0 && (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ),
-            )}
-          </select>
-          <select
-            onChange={(e) => {
-              isAgeValid(e.target.value) && setAgeSearch(e.target.value);
-            }}
-            className="w-36 border-2 border-black"
-            defaultValue="Age"
-          >
-            <option disabled>Age</option>
-            <option value="Baby">Baby</option>
-            <option value="Young">Young</option>
-            <option value="Adult">Adult</option>
-            <option value="Senior">Senior</option>
-          </select>
-          <select
-            onChange={(e) => {
-              setSearchLimit(Number(e.target.value));
-            }}
-            defaultValue={5}
-            className="border-2 border-black"
-          >
-            <option value={3}>3</option>
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-          </select>
-          <div className="flex w-full justify-center">
+
+          <div className="flex flex-wrap justify-center gap-4">
+            <input
+              className="border-2 w-[8rem] pl-1  border-black"
+              type="text"
+              placeholder="Zip Code"
+              value={zipSearch}
+              onChange={(e) => setZipSearch(e.target.value)}
+            />
+            <select
+              className="w-[6rem] border-2 border-black"
+              onChange={(e) =>
+                isStateValid(e.target.value) && setStateSearch(e.target.value)
+              }
+              defaultValue="State"
+            >
+              <option className="" disabled>
+                State
+              </option>
+              {fiftyStates.map(
+                (state) =>
+                  state.length > 0 && (
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
+                  ),
+              )}
+            </select>
+            <select
+              onChange={(e) => {
+                isAgeValid(e.target.value) && setAgeSearch(e.target.value);
+              }}
+              className="w-[8rem] border-2 border-black"
+              defaultValue="Age"
+            >
+              <option disabled>Age</option>
+              <option value="Baby">Baby</option>
+              <option value="Young">Young</option>
+              <option value="Adult">Adult</option>
+              <option value="Senior">Senior</option>
+            </select>
+            <select
+              onChange={(e) => {
+                setSearchLimit(Number(e.target.value));
+              }}
+              defaultValue="Per Page"
+              className="border-2 w-[6rem] border-black"
+            >
+              <option disabled>Per Page</option>
+              <option value={3}>3</option>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+            </select>
+          </div>
+          <div className="flex w-full mt-4 justify-center">
             <button
               className="w-24 border-2 border-black"
               onClick={handleSearch}
