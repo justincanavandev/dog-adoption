@@ -19,8 +19,8 @@ type DogsProps = {
 };
 
 const Dogs = ({ favoriteDogs, sessionData, currentUser }: DogsProps) => {
-  const [ageSearch, setAgeSearch] = useState<Age>("");
-  const [stateSearch, setStateSearch] = useState<State>("");
+  const [ageSearch, setAgeSearch] = useState<Age | "Age">("Age");
+  const [stateSearch, setStateSearch] = useState<State | "State">("State");
   const [citySearch, setCitySearch] = useState<string>("");
   const [zipSearch, setZipSearch] = useState<string>("");
   const [breedSearch, setBreedSearch] = useState<string>("");

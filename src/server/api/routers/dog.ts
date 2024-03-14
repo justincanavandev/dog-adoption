@@ -117,12 +117,14 @@ export const dogRouter = createTRPCRouter({
             message: "String must match Age type",
           }),
           z.literal(""),
+          z.literal("Age"),
         ]),
         state: z.union([
           z.string().refine((state) => isStateValid(state.trim()), {
             message: "String must be State type",
           }),
           z.literal(""),
+          z.literal("State"),
         ]),
         city: z.string(),
         zipCode: z.union([

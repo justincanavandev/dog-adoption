@@ -19,7 +19,7 @@ export const capitalizeFirstLetter = (word: string) => {
       return capitalizedWord;
     });
     const joinedString = splitArr.join(" ");
-    return joinedString;
+    return joinedString.trim();
   }
 };
 

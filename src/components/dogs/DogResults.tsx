@@ -2,7 +2,6 @@ import { type MutableRefObject, useContext, useRef } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
-// import Link from "next/link";
 import Head from "next/head";
 import { capitalizeFirstLetter } from "~/utils/helpers";
 import type { DogWithRelations } from "~/types/dog-types";
@@ -83,7 +82,7 @@ const DogResults = () => {
       <div className="mt-4 flex flex-wrap justify-center gap-4">
         {/* <Link href="/">Go to Home Page</Link> */}
         <h2 className="w-full text-center text-[1.5rem] mt-4"> Find Your Match!</h2>
-        <dialog ref={favoriteDialogRef} className="modal">
+        <dialog ref={favoriteDialogRef} className="modal backdrop:backdrop-blur-sm">
           <Dialog title="Favorite Dogs!" Component={<FavoriteDogs remove={removeFromFavorites} add={handleAddToFavorites} />} />
         </dialog>
         {favoriteDogs.length > 0 && (
@@ -102,26 +101,29 @@ const DogResults = () => {
           dogsToShow?.map((dog) => (
             <div
               key={dog.id}
-              className={`relative flex h-auto max-w-[270px] flex-col items-center justify-between overflow-hidden rounded-md border xs:w-[90%] sm:w-[50%]`}
+              className={`relative flex h-auto w-[240px] flex-col items-center justify-between overflow-hidden rounded-md border xs:w-[90%] sm:w-[50%]`}
             >
               {!isDogsLoading || !isFetchingNextPage ? (
                 <>
                   <Image
                     alt={`Image of ${dog.name}, ${dog.breed}`}
                     height={270}
-                    width={270}
+                    width={240}
+                    // fill={true}
                     style={{
                       objectFit: "cover",
                       maxHeight: "270px",
-                      maxWidth: "270px",
+                      maxWidth: "240px",
+                      minHeight: "270px",
+                      minWidth: "240px"
                     }}
-
+                    priority={false}
                     quality={100}
                     className="rounded-lg"
                     src={dog.photos[0] ? dog.photos[0].medium : imgNotFound}
                   ></Image>
 
-                  <div className="flex h-full max-w-[270px] flex-col justify-around gap-1 pl-2 text-center xs:text-[1.2rem]">
+                  <div className="flex h-full max-w-[240px] flex-col justify-around gap-1 pl-2 text-center xs:text-[1.2rem]">
                     <div className="mt-2 flex flex-col items-center">
                       <h3 className="w-full truncate text-center text-[1.8rem]">
                         {dog.name}

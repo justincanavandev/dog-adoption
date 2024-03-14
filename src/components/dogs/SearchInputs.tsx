@@ -5,7 +5,6 @@ import { isAgeValid } from "~/utils/type-guards";
 import { isStateValid } from "~/utils/type-guards";
 import { api } from "~/utils/api";
 import Dialog from "../base/Dialog";
-// import FavoriteDogs from "../dialogs/FavoriteDogs";
 
 const SearchInputs = () => {
   const {
@@ -26,18 +25,32 @@ const SearchInputs = () => {
     setSearchLimit,
   } = useContext(DogContext);
 
-  // const { data: allDogs } = api.dog.getAll.useQuery();
   const { refetch: refetchAllBreeds } = api.dog.getAllBreeds.useQuery();
   const breedDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
   const [breedDuplicates, setBreedDuplicates] = useState<string[]>([]);
 
+  const clearSearchParams = () => {
+    setAgeSearch("Age");
+    setStateSearch("State");
+    setCitySearch("");
+    setZipSearch("");
+    setBreedSearch("");
+  };
+
   const handleSearch = async () => {
-    console.log("yes");
     setCurrentPage(0);
 
+    setSearchTerms({
+      limit: searchLimit,
+      age: ageSearch,
+      state: stateSearch,
+      city: citySearch,
+      zipCode: zipSearch,
+      breed: breedSearch,
+    });
+
     if (breedSearch) {
-      console.log("breedSearch", breedSearch);
       const fetchedBreeds = await refetchAllBreeds();
       if (fetchedBreeds?.data) {
         const breeds = findBreedDuplicates(fetchedBreeds.data, breedSearch);
@@ -50,32 +63,36 @@ const SearchInputs = () => {
             breedDialogRef.current?.showModal();
           });
         }
+        // else {
+        // }
       }
     } else {
-      setSearchTerms({
-        limit: searchLimit,
-        age: ageSearch,
-        state: stateSearch,
-        city: citySearch,
-        zipCode: zipSearch,
-        breed: breedSearch,
-      });
+      clearSearchParams();
     }
   };
 
   const BreedDialog = () => (
     <>
       {breedDuplicates.length > 0 && (
-        <div>
+        <div className="flex flex-col items-center xs:w-[300px]">
+          <h4 className="mb-7 max-w-[70%] text-center">
+            Did you mean one of these?
+          </h4>
           <select
+            className="w-[9rem] border border-black"
+            defaultValue="Select one!"
             onChange={(e) => {
               setSearchTerms({
                 ...searchTerms,
                 breed: e.target.value,
               });
               breedDialogRef.current?.close();
+              clearSearchParams();
             }}
           >
+            <option className="" disabled>
+              Select one!
+            </option>
             {breedDuplicates.map((breed) => (
               <option key={breed} value={breed}>
                 {breed}
@@ -88,27 +105,24 @@ const SearchInputs = () => {
   );
 
   return (
-    <div className="flex flex-col mt-16 items-center">
+    <div className="mt-16 flex flex-col items-center">
       <h1 className="pl-4 text-[1.5rem]">Search for Dogs!</h1>
 
-      <dialog ref={breedDialogRef} className="modal">
-        <Dialog
-          title="Did you mean one of these?"
-          Component={<BreedDialog />}
-        />
+      <dialog ref={breedDialogRef} className="modal backdrop:backdrop-blur-sm">
+        <Dialog title="Breed not found!" Component={<BreedDialog />} />
       </dialog>
 
       <>
-        <div className="flex flex-col border max-w-[600px] rounded-md items-center gap-2 py-4 xs:flex-row xs:flex-wrap xs:justify-center">
+        <div className="flex max-w-[600px] flex-col items-center gap-2 rounded-md border py-4 xs:flex-row xs:flex-wrap xs:justify-center">
           <input
-            className="w-[14rem] pl-1 border-2 border-black "
+            className="w-[14rem] border-2 border-black pl-1 "
             type="text"
             placeholder="Breed"
             value={breedSearch}
             onChange={(e) => setBreedSearch(e.target.value)}
           />
           <input
-            className="w-[14rem] pl-1 border-2 border-black"
+            className="w-[14rem] border-2 border-black pl-1"
             type="text"
             placeholder="City"
             value={citySearch}
@@ -117,7 +131,7 @@ const SearchInputs = () => {
 
           <div className="flex flex-wrap justify-center gap-4">
             <input
-              className="border-2 w-[8rem] pl-1  border-black"
+              className="w-[8rem] border-2 border-black  pl-1"
               type="text"
               placeholder="Zip Code"
               value={zipSearch}
@@ -128,7 +142,8 @@ const SearchInputs = () => {
               onChange={(e) =>
                 isStateValid(e.target.value) && setStateSearch(e.target.value)
               }
-              defaultValue="State"
+              // defaultValue="State"
+              value={stateSearch}
             >
               <option className="" disabled>
                 State
@@ -147,7 +162,7 @@ const SearchInputs = () => {
                 isAgeValid(e.target.value) && setAgeSearch(e.target.value);
               }}
               className="w-[8rem] border-2 border-black"
-              defaultValue="Age"
+              value={ageSearch}
             >
               <option disabled>Age</option>
               <option value="Baby">Baby</option>
@@ -159,8 +174,8 @@ const SearchInputs = () => {
               onChange={(e) => {
                 setSearchLimit(Number(e.target.value));
               }}
-              defaultValue="Per Page"
-              className="border-2 w-[6rem] border-black"
+              value={searchLimit}
+              className="w-[6rem] border-2 border-black"
             >
               <option disabled>Per Page</option>
               <option value={3}>3</option>
@@ -168,12 +183,18 @@ const SearchInputs = () => {
               <option value={10}>10</option>
             </select>
           </div>
-          <div className="flex w-full mt-4 justify-center">
+          <div className="mt-4 flex w-full justify-center gap-2">
             <button
               className="w-24 border-2 border-black"
               onClick={handleSearch}
             >
               Search
+            </button>
+            <button
+              className="w-24 border-2 border-black"
+              onClick={clearSearchParams}
+            >
+              Clear
             </button>
           </div>
         </div>
