@@ -10,6 +10,8 @@ import { api } from "~/utils/api";
 import Spinner from "../Spinner";
 import Dialog from "../base/Dialog";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+// import toast from "react-hot-toast";
+
 
 const DogResults = () => {
   const {
@@ -33,6 +35,7 @@ const DogResults = () => {
   const totalDogs = dogData?.pages[currentPage]?.totalDogs;
   const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : 0;
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
+  // const [updatedDogId, setUpdatedDogId] = useState<number | null>(null);
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
@@ -43,11 +46,46 @@ const DogResults = () => {
     setCurrentPage((prev) => prev - 1);
   };
 
+  // const { data: dogById } = api.dog.getOneById.useQuery(
+  //   {
+  //     id: updatedDogId ? updatedDogId : 0,
+  //   },
+  //   {
+  //     enabled: updatedDogId !== null && typeof updatedDogId === "number",
+  //   },
+  // );
+
+  
+
   const { mutate: updateFavorites } = api.user.updateFavorites.useMutation({
     onSuccess: async () => {
+      // console.log("favDogIds", favDogIds);
+      // console.log("data", data);
+      // console.log("context", context);
+      // // if(favoritesData?.dogIds) {
+      // if (favDogIds.length > data?.dogIds?.length) {
+      //   // toast("hello")
+
+      //   toast(`You have removed ${favDogIds?.pop()} from your favorites!`);
+      // } else {
+      //   if (favDogIds) {
+      //     const dogId = favDogIds.pop();
+      //     if (typeof dogId === "number") {
+      //       setUpdatedDogId(dogId)
+      //       console.log('dogId', dogById)
+      //       // const dog = getDogById(dogId);
+      //       // console.log("dog", dog);
+      //     }
+      //   }
+      //   toast(`You have added g to your favorites!`);
+      // }
+
+      // console.log('variables', variables)
       await utils.user.getById.invalidate();
       await utils.dog.getManyById.invalidate();
+      // toast("hello")
     },
+    // }
   });
 
   const handleAddToFavorites = (dog: DogWithRelations) => {
@@ -81,13 +119,27 @@ const DogResults = () => {
       </Head>
       <div className="mt-4 flex flex-wrap justify-center gap-4">
         {/* <Link href="/">Go to Home Page</Link> */}
-        <h2 className="w-full text-center text-[1.5rem] mt-4"> Find Your Match!</h2>
-        <dialog ref={favoriteDialogRef} className="modal backdrop:backdrop-blur-sm">
-          <Dialog title="Favorite Dogs!" Component={<FavoriteDogs remove={removeFromFavorites} add={handleAddToFavorites} />} />
+        <h2 className="mt-4 w-full text-center text-[1.5rem]">
+          {" "}
+          Find Your Match!
+        </h2>
+        <dialog
+          ref={favoriteDialogRef}
+          className="modal backdrop:backdrop-blur-sm"
+        >
+          <Dialog
+            title="Favorite Dogs!"
+            Component={
+              <FavoriteDogs
+                remove={removeFromFavorites}
+                add={handleAddToFavorites}
+              />
+            }
+          />
         </dialog>
         {favoriteDogs.length > 0 && (
           <FaHeart
-            className="absolute right-4 top-2 text-[2rem] text-red-400 cursor-pointer"
+            className="absolute right-4 top-2 cursor-pointer text-[2rem] text-red-400"
             onClick={() => favoriteDialogRef.current?.showModal()}
           ></FaHeart>
         )}
@@ -115,7 +167,7 @@ const DogResults = () => {
                       maxHeight: "270px",
                       maxWidth: "240px",
                       minHeight: "270px",
-                      minWidth: "240px"
+                      minWidth: "240px",
                     }}
                     priority={false}
                     quality={100}

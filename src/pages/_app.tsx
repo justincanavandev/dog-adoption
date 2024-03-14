@@ -8,7 +8,7 @@ import "~/styles/globals.css";
 import { useState, useEffect } from "react";
 import type { AuthOResponse } from "~/types/auth-types";
 import { AuthContext } from "~/context/APIAuthContext";
-
+import { Toaster } from "react-hot-toast";
 
 import { roboto } from "~/styles/fonts";
 import Layout from "~/components/layout/Layout";
@@ -116,6 +116,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
             <Component {...pageProps} />
           </main>
+          <Toaster position="top-center" />
         </AuthContext.Provider>
       </Layout>
     </SessionProvider>
