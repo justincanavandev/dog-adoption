@@ -5,6 +5,7 @@ import { isAgeValid } from "~/utils/type-guards";
 import { isStateValid } from "~/utils/type-guards";
 import { api } from "~/utils/api";
 import Dialog from "../base/Dialog";
+import Button from "../base/Button";
 
 const SearchInputs = () => {
   const {
@@ -25,7 +26,9 @@ const SearchInputs = () => {
     setSearchLimit,
   } = useContext(DogContext);
 
-  const { refetch: refetchAllBreeds } = api.dog.getAllBreeds.useQuery();
+  const { refetch: refetchAllBreeds } = api.dog.getAllBreeds.useQuery(void 0, {
+    staleTime: 5000 * 60,
+  });
   const breedDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
   const [breedDuplicates, setBreedDuplicates] = useState<string[]>([]);
@@ -63,8 +66,6 @@ const SearchInputs = () => {
             breedDialogRef.current?.showModal();
           });
         }
-        // else {
-        // }
       }
     } else {
       clearSearchParams();
@@ -105,7 +106,7 @@ const SearchInputs = () => {
   );
 
   return (
-    <div className="mt-12 flex flex-col items-center">
+    <div className="flex flex-col items-center pt-12">
       <h1 className="mb-2 pl-4 text-[1.5rem]">Search for Dogs!</h1>
 
       <dialog ref={breedDialogRef} className="modal backdrop:backdrop-blur-sm">
@@ -113,7 +114,7 @@ const SearchInputs = () => {
       </dialog>
 
       <>
-        <div className="flex max-w-[385px] flex-col items-center gap-2 rounded-md border py-4 xs:flex-row xs:flex-wrap xs:justify-center">
+        <div className="flex w-[290px] max-w-[385px] flex-col items-center gap-2 rounded-md border-2 border-black py-4 xs:flex-row xs:flex-wrap xs:justify-center">
           <input
             className="w-[15rem] border-2 border-black pl-1 "
             type="text"
@@ -183,18 +184,20 @@ const SearchInputs = () => {
             </select>
           </div>
           <div className="mt-4 flex w-full justify-center gap-2">
-            <button
+            {/* <button
               className="w-24 border-2 border-black"
               onClick={handleSearch}
             >
               Search
-            </button>
-            <button
+            </button> */}
+            <Button text="Search" action={handleSearch} />
+            {/* <button
               className="w-24 border-2 border-black"
               onClick={clearSearchParams}
             >
               Clear
-            </button>
+            </button> */}
+            <Button text="Clear" action={clearSearchParams} />
           </div>
         </div>
       </>

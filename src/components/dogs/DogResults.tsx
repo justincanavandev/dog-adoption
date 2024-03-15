@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { type FavoriteDogs as FavoriteDogsType } from "@prisma/client";
 import { isFavoriteDogsValid, isUpdatedDogValid } from "~/utils/type-guards";
 import { isHostnameValid } from "~/utils/helpers";
+import Button from "../base/Button";
 
 const DogResults = () => {
   const {
@@ -144,11 +145,8 @@ const DogResults = () => {
           onClick={() => favoriteDialogRef.current?.showModal()}
         ></FaHeart>
       )} */}
-      <div className="relative mt-4 flex flex-wrap justify-center gap-4">
-        <h2 className="w-full text-center text-[1.5rem]">
-          {" "}
-          Find Your Match!
-        </h2>
+      <div className="relative mx-4 mt-4 flex flex-wrap justify-center gap-4">
+        <h2 className="w-full text-center text-[1.5rem]"> Find Your Match!</h2>
         <dialog
           ref={favoriteDialogRef}
           className="modal backdrop:backdrop-blur-sm"
@@ -174,7 +172,7 @@ const DogResults = () => {
           dogsToShow?.map((dog) => (
             <div
               key={dog.id}
-              className={`relative flex h-auto w-[240px] flex-col items-center justify-between overflow-hidden rounded-md border`}
+              className={`relative flex h-auto w-[240px] flex-col items-center justify-between overflow-hidden rounded-md border-2 border-black`}
             >
               {!isDogsLoading || !isFetchingNextPage ? (
                 <>
@@ -189,7 +187,7 @@ const DogResults = () => {
                       minHeight: "270px",
                       minWidth: "240px",
                     }}
-                    priority={false}
+                    priority={true}
                     quality={100}
                     className="rounded-lg"
                     src={
@@ -202,8 +200,8 @@ const DogResults = () => {
                   ></Image>
 
                   <div className="flex h-full max-w-[240px] flex-col justify-around gap-1 pl-2 text-center xs:text-[1.2rem]">
-                    <div className="mt-2 flex flex-col items-center w-auto">
-                      <h3 className="w-full truncate text-center text-[1.8rem] px-1">
+                    <div className="mt-2 flex w-auto flex-col items-center">
+                      <h3 className="w-full truncate px-1 text-center text-[1.8rem]">
                         {dog.name}
                       </h3>
                       <span className="max-w-full truncate px-1">{`\u2022 ${dog.breed}`}</span>
@@ -251,7 +249,7 @@ const DogResults = () => {
         {/* Pagination */}
         {dogsToShow?.length !== 0 && !isDogsLoading && dogsToShow && (
           <div className="mb-2 flex w-full justify-evenly">
-            <button
+            {/* <button
               className="border-2 border-black px-1"
               onClick={() => {
                 handleFetchPreviousPage();
@@ -259,12 +257,17 @@ const DogResults = () => {
               disabled={currentPage <= 0}
             >
               Prev Page
-            </button>
+            </button> */}
+            <Button
+              text="Prev Page"
+              action={handleFetchPreviousPage}
+              disabled={currentPage <= 0}
+            />
             <p>
               Page {currentPage + 1}
               {totalPages > 0 && ` of ${totalPages}`}
             </p>
-            <button
+            {/* <button
               className="border-2 border-black px-1"
               onClick={() => {
                 void handleFetchNextPage();
@@ -272,7 +275,12 @@ const DogResults = () => {
               disabled={!nextCursor ? true : false}
             >
               Next page
-            </button>
+            </button> */}
+            <Button
+              text="Next Page"
+              asyncAction={handleFetchNextPage}
+              disabled={!nextCursor ? true : false}
+            />
           </div>
         )}
       </div>

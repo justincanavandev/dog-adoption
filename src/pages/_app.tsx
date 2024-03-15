@@ -1,13 +1,9 @@
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-import axios from "axios";
-import type { AxiosResponse } from "axios";
+
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
-import { useState, useEffect } from "react";
-import type { AuthOResponse } from "~/types/auth-types";
-import { AuthContext } from "~/context/APIAuthContext";
 import { Toaster } from "react-hot-toast";
 
 import { cuprum } from "~/styles/fonts";
@@ -15,28 +11,33 @@ import Layout from "~/components/layout/Layout";
 // import { useQuery } from "@tanstack/react-query";
 // import type { DogWithRelations } from "~/types/dog-types";
 // import type { Photo } from "@prisma/client";
+// import { useState, useEffect } from "react";
+// import type { AuthOResponse } from "~/types/auth-types";
+// import { AuthContext } from "~/context/APIAuthContext";
+// import axios from "axios";
+// import type { AxiosResponse } from "axios";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const API_BASE_URL = "https://api.petfinder.com/v2";
+  // const [accessToken, setAccessToken] = useState<string | null>(null);
+  // const API_BASE_URL = "https://api.petfinder.com/v2";
 
-  useEffect(() => {
-    const fetchAccessToken: () => Promise<void> = async () => {
-      try {
-        const res: AxiosResponse<AuthOResponse> =
-          await axios.get("/api/oauth-token");
-        const data: AuthOResponse = res.data;
-        const { access_token } = data;
-        setAccessToken(access_token);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    void fetchAccessToken();
-  }, []);
+  // useEffect(() => {
+  //   const fetchAccessToken: () => Promise<void> = async () => {
+  //     try {
+  //       const res: AxiosResponse<AuthOResponse> =
+  //         await axios.get("/api/oauth-token");
+  //       const data: AuthOResponse = res.data;
+  //       const { access_token } = data;
+  //       setAccessToken(access_token);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   };
+  //   void fetchAccessToken();
+  // }, []);
 
   // const [dogs, setDogs] = useState<DogWithRelations[]>([]);
 
@@ -111,13 +112,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Layout>
-        <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
-          <main className={`${cuprum.className}`}>
+        {/* <AuthContext.Provider value={{ accessToken, API_BASE_URL }}> */}
+          <main className={`${cuprum.className} bg-gray-300 min-h-screen`}>
             {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
             <Component {...pageProps} />
           </main>
           <Toaster position="top-center" />
-        </AuthContext.Provider>
+        {/* </AuthContext.Provider> */}
       </Layout>
     </SessionProvider>
   );
