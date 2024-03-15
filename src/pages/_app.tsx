@@ -10,7 +10,7 @@ import type { AuthOResponse } from "~/types/auth-types";
 import { AuthContext } from "~/context/APIAuthContext";
 import { Toaster } from "react-hot-toast";
 
-import { roboto } from "~/styles/fonts";
+import { cuprum } from "~/styles/fonts";
 import Layout from "~/components/layout/Layout";
 // import { useQuery } from "@tanstack/react-query";
 // import type { DogWithRelations } from "~/types/dog-types";
@@ -112,7 +112,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Layout>
         <AuthContext.Provider value={{ accessToken, API_BASE_URL }}>
-          <main className={`${roboto.className}`}>
+          <main className={`${cuprum.className}`}>
             {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
             <Component {...pageProps} />
           </main>
