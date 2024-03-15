@@ -58,7 +58,7 @@ export const userRouter = createTRPCRouter({
             },
           });
           if (favorites && updatedUser) {
-            return updatedUser;
+            return favorites;
           } else {
             throw new TRPCError({
               code: "BAD_REQUEST",

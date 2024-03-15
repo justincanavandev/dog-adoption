@@ -4,13 +4,15 @@ import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
 import Head from "next/head";
 import { capitalizeFirstLetter } from "~/utils/helpers";
-import type { DogWithRelations } from "~/types/dog-types";
+import type { DogWithRelations, UpdatedDog } from "~/types/dog-types";
 import FavoriteDogs from "../dialogs/FavoriteDogs";
 import { api } from "~/utils/api";
 import Spinner from "../Spinner";
 import Dialog from "../base/Dialog";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { type FavoriteDogs as FavoriteDogsType } from "@prisma/client";
+import { isFavoriteDogsValid, isUpdatedDogValid } from "~/utils/type-guards";
 
 const DogResults = () => {
   const {
@@ -35,11 +37,6 @@ const DogResults = () => {
   const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : 0;
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
 
-  type UpdatedDog = {
-    dogId: number;
-    action: string;
-  };
-
   const [updatedDog, setUpdatedDog] = useState<UpdatedDog | null>(null);
 
   const handleFetchNextPage = async () => {
@@ -53,16 +50,12 @@ const DogResults = () => {
 
   const {} = api.dog.getOneById.useQuery(
     {
-      id:
-        updatedDog && typeof updatedDog.dogId === "number"
-          ? updatedDog.dogId
-          : 0,
+      id: updatedDog?.dogId ?? -1,
     },
     {
-      enabled: updatedDog !== null && typeof updatedDog.dogId === "number",
+      enabled: isUpdatedDogValid(updatedDog),
       onSuccess: (data) => {
         if (data) {
-          // if (updatedDog) {
           if (updatedDog?.action === "add") {
             toast.success(
               `You have successfully added ${data?.name} (${data?.breed}) to your favorites!`,
@@ -72,42 +65,46 @@ const DogResults = () => {
               `You have removed ${data?.name} (${data?.breed}) from your favorites!`,
             );
           }
-          // }
           setUpdatedDog(null);
         }
       },
     },
   );
 
-  const { mutate: updateFavorites } = api.user.updateFavorites.useMutation({
-    onSuccess: async (data) => {
-      if (data && "dogIds" in data) {
-        if (favDogIds.length > data?.dogIds?.length) {
-          console.log("hello");
-          const removedIdArr = favDogIds.filter(
-            (id) => !data?.dogIds?.includes(id),
-          );
+  const handleUpdateFavorites = (favorites: FavoriteDogsType) => {
+    if (favDogIds.length > favorites?.dogIds?.length) {
+      const removedIdArr = favDogIds.filter(
+        (id) => !favorites?.dogIds?.includes(id),
+      );
 
-          const removedId = removedIdArr[0];
+      const removedId = removedIdArr[0];
 
-          if (removedId) {
-            setUpdatedDog({
-              dogId: removedId,
-              action: "remove",
-            });
-          }
-        } else {
-          const dogId = data?.dogIds.pop();
-          if (typeof dogId === "number") {
-            setUpdatedDog({
-              dogId,
-              action: "add",
-            });
-          }
-        }
-        await utils.user.getById.invalidate();
-        await utils.dog.getManyById.invalidate();
+      if (removedId) {
+        setUpdatedDog({
+          dogId: removedId,
+          action: "remove",
+        });
       }
+    } else {
+      const dogId = favorites.dogIds.pop();
+      if (dogId) {
+        setUpdatedDog({
+          dogId,
+          action: "add",
+        });
+      }
+    }
+  };
+
+  const { mutate: updateFavorites } = api.user.updateFavorites.useMutation({
+    onSuccess: async (data: FavoriteDogsType | undefined) => {
+      if (data) {
+        if (isFavoriteDogsValid(data)) {
+          handleUpdateFavorites(data);
+        }
+      }
+      await utils.user.getById.invalidate();
+      await utils.dog.getManyById.invalidate();
     },
   });
 

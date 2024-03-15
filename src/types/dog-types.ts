@@ -54,6 +54,11 @@ export type SearchTerms = {
   breed: string
 };
 
+export type UpdatedDog = {
+  dogId: number;
+  action: string;
+};
+
 export type RefetchResult = QueryObserverResult<
   InfiniteData<
     | {
