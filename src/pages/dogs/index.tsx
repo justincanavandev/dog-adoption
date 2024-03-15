@@ -17,12 +17,16 @@ const DogPage = () => {
     },
   );
 
+  // console.log('sessionData')
+  console.log('currentUser', currentUser)
+
   const {
     data: favoriteDogs,
     isSuccess: isFavoritesSuccess,
     isLoading: isFavoritesLoading,
   } = api.dog.getManyById.useQuery(
     {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       ids: currentUser?.favorites ? currentUser.favorites.dogIds : [],
     },
     { enabled: !!sessionData && !!currentUser, staleTime: 5000 * 60 },

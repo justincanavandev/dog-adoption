@@ -1,4 +1,4 @@
-import { type MutableRefObject, useContext, useRef } from "react";
+import { type MutableRefObject, useContext, useRef, useState } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -10,8 +10,7 @@ import { api } from "~/utils/api";
 import Spinner from "../Spinner";
 import Dialog from "../base/Dialog";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
-// import toast from "react-hot-toast";
-
+import toast from "react-hot-toast";
 
 const DogResults = () => {
   const {
@@ -35,7 +34,13 @@ const DogResults = () => {
   const totalDogs = dogData?.pages[currentPage]?.totalDogs;
   const totalPages = totalDogs ? Math.ceil(totalDogs / searchLimit) : 0;
   const nextCursor = dogData?.pages[currentPage]?.nextCursor;
-  // const [updatedDogId, setUpdatedDogId] = useState<number | null>(null);
+
+  type UpdatedDog = {
+    dogId: number;
+    action: string;
+  };
+
+  const [updatedDog, setUpdatedDog] = useState<UpdatedDog | null>(null);
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
@@ -46,46 +51,64 @@ const DogResults = () => {
     setCurrentPage((prev) => prev - 1);
   };
 
-  // const { data: dogById } = api.dog.getOneById.useQuery(
-  //   {
-  //     id: updatedDogId ? updatedDogId : 0,
-  //   },
-  //   {
-  //     enabled: updatedDogId !== null && typeof updatedDogId === "number",
-  //   },
-  // );
-
-  
+  const {} = api.dog.getOneById.useQuery(
+    {
+      id:
+        updatedDog && typeof updatedDog.dogId === "number"
+          ? updatedDog.dogId
+          : 0,
+    },
+    {
+      enabled: updatedDog !== null && typeof updatedDog.dogId === "number",
+      onSuccess: (data) => {
+        if (data) {
+          // if (updatedDog) {
+          if (updatedDog?.action === "add") {
+            toast.success(
+              `You have successfully added ${data?.name} (${data?.breed}) to your favorites!`,
+            );
+          } else {
+            toast.error(
+              `You have removed ${data?.name} (${data?.breed}) from your favorites!`,
+            );
+          }
+          // }
+          setUpdatedDog(null);
+        }
+      },
+    },
+  );
 
   const { mutate: updateFavorites } = api.user.updateFavorites.useMutation({
-    onSuccess: async () => {
-      // console.log("favDogIds", favDogIds);
-      // console.log("data", data);
-      // console.log("context", context);
-      // // if(favoritesData?.dogIds) {
-      // if (favDogIds.length > data?.dogIds?.length) {
-      //   // toast("hello")
+    onSuccess: async (data) => {
+      if (data && "dogIds" in data) {
+        if (favDogIds.length > data?.dogIds?.length) {
+          console.log("hello");
+          const removedIdArr = favDogIds.filter(
+            (id) => !data?.dogIds?.includes(id),
+          );
 
-      //   toast(`You have removed ${favDogIds?.pop()} from your favorites!`);
-      // } else {
-      //   if (favDogIds) {
-      //     const dogId = favDogIds.pop();
-      //     if (typeof dogId === "number") {
-      //       setUpdatedDogId(dogId)
-      //       console.log('dogId', dogById)
-      //       // const dog = getDogById(dogId);
-      //       // console.log("dog", dog);
-      //     }
-      //   }
-      //   toast(`You have added g to your favorites!`);
-      // }
+          const removedId = removedIdArr[0];
 
-      // console.log('variables', variables)
-      await utils.user.getById.invalidate();
-      await utils.dog.getManyById.invalidate();
-      // toast("hello")
+          if (removedId) {
+            setUpdatedDog({
+              dogId: removedId,
+              action: "remove",
+            });
+          }
+        } else {
+          const dogId = data?.dogIds.pop();
+          if (typeof dogId === "number") {
+            setUpdatedDog({
+              dogId,
+              action: "add",
+            });
+          }
+        }
+        await utils.user.getById.invalidate();
+        await utils.dog.getManyById.invalidate();
+      }
     },
-    // }
   });
 
   const handleAddToFavorites = (dog: DogWithRelations) => {
