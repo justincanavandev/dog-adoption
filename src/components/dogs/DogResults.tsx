@@ -30,7 +30,7 @@ const DogResults = () => {
     isDogsError,
     favoriteDialogRef,
   } = useContext(DogContext);
-  
+
   const utils = api.useUtils();
 
   const dogsToShow = dogData?.pages[currentPage]?.dogs;
@@ -202,18 +202,18 @@ const DogResults = () => {
                   ></Image>
 
                   <div className="flex h-full max-w-[240px] flex-col justify-around gap-1 pl-2 text-center xs:text-[1.2rem]">
-                    <div className="mt-2 flex flex-col items-center">
-                      <h3 className="w-full truncate text-center text-[1.8rem]">
+                    <div className="mt-2 flex flex-col items-center w-auto">
+                      <h3 className="w-full truncate text-center text-[1.8rem] px-1">
                         {dog.name}
                       </h3>
-                      <span className="max-w-full truncate">{`\u2022 ${dog.breed}`}</span>
+                      <span className="max-w-full truncate px-1">{`\u2022 ${dog.breed}`}</span>
                       <span>{`\u2022 ${dog.age}`}</span>
                       {/* <span className="truncate">
                    
                         {dog.address?.address1 &&
                           `\u2022 ${dog.address.address1},`}
                       </span> */}
-                      <span className="w-full truncate">
+                      <span className="w-full truncate px-1">
                         {dog.address?.city &&
                           `\u2022 ${capitalizeFirstLetter(dog.address.city)}, `}
                         {dog.address?.state &&
@@ -227,7 +227,7 @@ const DogResults = () => {
                 <Spinner />
               )}
               <div className="my-2 flex w-full flex-col items-center gap-1">
-                <div className="absolute right-2  top-2 cursor-pointer rounded-full bg-white p-2 text-[1.3rem] text-red-500 opacity-75 sm:text-[1.4rem] ">
+                <div className="absolute right-2 top-2 cursor-pointer rounded-full bg-white p-2 text-[1.3rem] text-red-500 opacity-75 sm:text-[1.4rem] ">
                   {favDogIds.includes(dog.id) ? (
                     <FaHeart
                       onClick={() => {

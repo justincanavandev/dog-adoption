@@ -113,16 +113,16 @@ const SearchInputs = () => {
       </dialog>
 
       <>
-        <div className="flex max-w-[600px] flex-col items-center gap-2 rounded-md border py-4 xs:flex-row xs:flex-wrap xs:justify-center">
+        <div className="flex max-w-[385px] flex-col items-center gap-2 rounded-md border py-4 xs:flex-row xs:flex-wrap xs:justify-center">
           <input
-            className="w-[14rem] border-2 border-black pl-1 "
+            className="w-[15rem] border-2 border-black pl-1 "
             type="text"
             placeholder="Breed"
             value={breedSearch}
             onChange={(e) => setBreedSearch(e.target.value)}
           />
           <input
-            className="w-[14rem] border-2 border-black pl-1"
+            className="w-[15rem] border-2 border-black pl-1"
             type="text"
             placeholder="City"
             value={citySearch}
@@ -142,7 +142,6 @@ const SearchInputs = () => {
               onChange={(e) =>
                 isStateValid(e.target.value) && setStateSearch(e.target.value)
               }
-              // defaultValue="State"
               value={stateSearch}
             >
               <option className="" disabled>
