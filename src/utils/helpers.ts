@@ -23,6 +23,21 @@ export const capitalizeFirstLetter = (word: string) => {
   }
 };
 
+const allowedHostnames = [
+  "dl5zpyw5k3jeb.cloudfront.net",
+  "dbw3zep4prcju.cloudfront.net",
+];
+
+export const isHostnameValid = (url: string) => {
+  // Takes off the https:// as well as everything after ".net".. matches format in allowedHostnames array
+  const splitUrl = url.substring(8).split("/");
+  const urlMatch = splitUrl[0];
+  if (urlMatch) {
+    return allowedHostnames.includes(urlMatch);
+  }
+
+};
+
 export const isZipCodeValid = (str: string) => /^\d{5}(-\d{4})?$/.test(str);
 
 export const removeDuplicates = <T>(data: T[]) => [...new Set(data)];

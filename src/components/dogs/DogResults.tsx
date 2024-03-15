@@ -13,6 +13,7 @@ import { FaRegHeart, FaHeart } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { type FavoriteDogs as FavoriteDogsType } from "@prisma/client";
 import { isFavoriteDogsValid, isUpdatedDogValid } from "~/utils/type-guards";
+import { isHostnameValid } from "~/utils/helpers";
 
 const DogResults = () => {
   const {
@@ -181,7 +182,6 @@ const DogResults = () => {
                     alt={`Image of ${dog.name}, ${dog.breed}`}
                     height={270}
                     width={240}
-                    // fill={true}
                     style={{
                       objectFit: "cover",
                       maxHeight: "270px",
@@ -192,7 +192,13 @@ const DogResults = () => {
                     priority={false}
                     quality={100}
                     className="rounded-lg"
-                    src={dog.photos[0] ? dog.photos[0].medium : imgNotFound}
+                    src={
+                      dog.photos[0]
+                        ? isHostnameValid(dog.photos[0].medium)
+                          ? dog.photos[0].medium
+                          : imgNotFound
+                        : imgNotFound
+                    }
                   ></Image>
 
                   <div className="flex h-full max-w-[240px] flex-col justify-around gap-1 pl-2 text-center xs:text-[1.2rem]">

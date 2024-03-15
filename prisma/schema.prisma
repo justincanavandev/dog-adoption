@@ -84,15 +84,11 @@ model Dog {
   id      Int      @id @unique
   address Address?
   photos  Photo[]
-  // favoriteDogs FavoriteDogs?
 }
 
 model FavoriteDogs {
-  // id     String @id @default(cuid())
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique
-  // dog    Dog?    @relation(fields: [dogId], references: [id])
-  // dogId  Int?    @unique
   dogIds Int[]
 
   @@index(userId)

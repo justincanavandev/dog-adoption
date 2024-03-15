@@ -17,9 +17,6 @@ const DogPage = () => {
     },
   );
 
-  // console.log('sessionData')
-  console.log('currentUser', currentUser)
-
   const {
     data: favoriteDogs,
     isSuccess: isFavoritesSuccess,
@@ -34,8 +31,6 @@ const DogPage = () => {
 
   return (
     <>
-      {/* {isUserLoading && <Spinner fullscreen={true} />}
-      {isUserError && <div>Error fetching user!</div>} */}
       <Dogs
         favoriteDogs={
           favoriteDogs && isFavoritesSuccess && !isFavoritesLoading
