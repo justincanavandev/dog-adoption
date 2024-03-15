@@ -18,12 +18,18 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    // domains: ['dl5zpyw5k3jeb.cloudfront.net'],
-    remotePatterns: [{
-      protocol: "https",
-      hostname: 'dl5zpyw5k3jeb.cloudfront.net',
-      port: ""
-  }]
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "dl5zpyw5k3jeb.cloudfront.net",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "dbw3zep4prcju.cloudfront.net",
+        port: "",
+      },
+    ],
   },
 };
 
