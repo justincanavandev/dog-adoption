@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type MutableRefObject } from "react";
 import type {
   DogWithRelations,
   Age,
@@ -16,9 +16,10 @@ type DogsProps = {
   favoriteDogs: DogWithRelations[];
   sessionData: Session | null;
   currentUser: UserWithRelations | undefined;
+  favoriteDialogRef: MutableRefObject<HTMLDialogElement | null>;
 };
 
-const Dogs = ({ favoriteDogs, sessionData, currentUser }: DogsProps) => {
+const Dogs = ({ favoriteDogs, sessionData, currentUser, favoriteDialogRef }: DogsProps) => {
   const [ageSearch, setAgeSearch] = useState<Age | "Age">("Age");
   const [stateSearch, setStateSearch] = useState<State | "State">("State");
   const [citySearch, setCitySearch] = useState<string>("");
@@ -88,17 +89,10 @@ const Dogs = ({ favoriteDogs, sessionData, currentUser }: DogsProps) => {
         searchLimit,
         setSearchLimit,
         isFetchingNextPage,
+        favoriteDialogRef
       }}
     >
       <SearchInputs />
-      {/* {isDogsLoading && <Spinner fullscreen={true} />} */}
-      {/* {errorMessage && (
-        <div className="mt-4 w-full text-center">{errorMessage}</div>
-      )} */}
-      {/* {matchedDog.id && <MatchedDog />} */}
-      {/* {favoriteDogObjects.length > 0 && <FavoriteDogs />} */}
-      {/* {isPaginationLoading && <Spinner />}
-      {paginatedDogData && !isPaginationLoading && isPaginationSuccess && ( */}
       <DogResults />
     </DogContext.Provider>
   );

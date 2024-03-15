@@ -5,11 +5,10 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
-
-
   return (
     <>
-      <main className="mx-4">{children}</main>
+
+      <main className="">{children}</main>
     </>
   );
 }

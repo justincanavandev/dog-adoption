@@ -6,7 +6,7 @@ import type {
   SearchTerms,
   // DogData,
 } from "~/types/dog-types";
-import type { SetStateAction } from "react";
+import type { SetStateAction, MutableRefObject} from "react";
 import type { Session } from "next-auth";
 import type { UserWithRelations } from "~/types/dog-types";
 import type {
@@ -47,6 +47,7 @@ export type DogContextType = {
   setSearchTerms: React.Dispatch<SetStateAction<SearchTerms>>;
   searchLimit: number
   setSearchLimit: React.Dispatch<SetStateAction<number>>;
+  favoriteDialogRef: MutableRefObject<HTMLDialogElement | null>
   dogData:
     | InfiniteData<
         | {

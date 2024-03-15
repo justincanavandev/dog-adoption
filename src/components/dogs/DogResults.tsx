@@ -1,4 +1,4 @@
-import { type MutableRefObject, useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { DogContext } from "~/context/DogContext";
 import Image from "next/image";
 import imgNotFound from "public/images/img-unavail.jpeg";
@@ -28,9 +28,9 @@ const DogResults = () => {
     dogData,
     searchLimit,
     isDogsError,
+    favoriteDialogRef,
   } = useContext(DogContext);
-  const favoriteDialogRef: MutableRefObject<HTMLDialogElement | null> =
-    useRef(null);
+  
   const utils = api.useUtils();
 
   const dogsToShow = dogData?.pages[currentPage]?.dogs;
@@ -138,9 +138,14 @@ const DogResults = () => {
       <Head>
         <title>Search for Dogs!</title>
       </Head>
-      <div className="mt-4 flex flex-wrap justify-center gap-4">
-        {/* <Link href="/">Go to Home Page</Link> */}
-        <h2 className="mt-4 w-full text-center text-[1.5rem]">
+      {/* {favoriteDogs.length > 0 && (
+        <FaHeart
+          className="absolute left-3 top-2 z-50 cursor-pointer text-[1.6rem] text-red-400"
+          onClick={() => favoriteDialogRef.current?.showModal()}
+        ></FaHeart>
+      )} */}
+      <div className="relative mt-4 flex flex-wrap justify-center gap-4">
+        <h2 className="w-full text-center text-[1.5rem]">
           {" "}
           Find Your Match!
         </h2>
@@ -158,12 +163,7 @@ const DogResults = () => {
             }
           />
         </dialog>
-        {favoriteDogs.length > 0 && (
-          <FaHeart
-            className="absolute right-4 top-2 cursor-pointer text-[2rem] text-red-400"
-            onClick={() => favoriteDialogRef.current?.showModal()}
-          ></FaHeart>
-        )}
+
         {isDogsLoading && <Spinner />}
         {isDogsError ||
           (!isDogsLoading && !dogsToShow && <div>Error fetching dogs!</div>)}
@@ -174,7 +174,7 @@ const DogResults = () => {
           dogsToShow?.map((dog) => (
             <div
               key={dog.id}
-              className={`relative flex h-auto w-[240px] flex-col items-center justify-between overflow-hidden rounded-md border xs:w-[90%] sm:w-[50%]`}
+              className={`relative flex h-auto w-[240px] flex-col items-center justify-between overflow-hidden rounded-md border`}
             >
               {!isDogsLoading || !isFetchingNextPage ? (
                 <>

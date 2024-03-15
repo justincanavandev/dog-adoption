@@ -105,8 +105,8 @@ const SearchInputs = () => {
   );
 
   return (
-    <div className="mt-16 flex flex-col items-center">
-      <h1 className="pl-4 text-[1.5rem]">Search for Dogs!</h1>
+    <div className="mt-12 flex flex-col items-center">
+      <h1 className="mb-2 pl-4 text-[1.5rem]">Search for Dogs!</h1>
 
       <dialog ref={breedDialogRef} className="modal backdrop:backdrop-blur-sm">
         <Dialog title="Breed not found!" Component={<BreedDialog />} />

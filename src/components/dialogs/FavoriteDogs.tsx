@@ -18,8 +18,8 @@ const FavoriteDogs = ({ remove, add }: FavoriteDogsType) => {
 
   return (
     <>
-      <div className="flex w-[300px] flex-col gap-8 items-center rounded-md xs:w-[400px] sm:w-[640px] md:w-[750px] ">
-        <div className="overflow-y-scroll flex flex-col gap-6  sm:flex-row sm:flex-wrap sm:justify-center">
+      <div className="flex w-[300px] flex-col items-center gap-8 rounded-md xs:w-[400px] sm:w-[640px] md:w-[750px] ">
+        <div className="flex flex-col gap-6 overflow-y-scroll  sm:flex-row sm:flex-wrap sm:justify-center">
           {favoriteDogs.map((dog) => (
             <div
               key={dog.id}
@@ -73,14 +73,12 @@ const FavoriteDogs = ({ remove, add }: FavoriteDogsType) => {
                       onClick={() => {
                         remove(dog);
                       }}
-                      className=""
                     />
                   ) : (
                     <FaRegHeart
                       onClick={() => {
                         add(dog);
                       }}
-                      className=""
                     />
                   )}
                 </div>
