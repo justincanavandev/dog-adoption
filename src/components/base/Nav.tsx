@@ -11,7 +11,7 @@ type NavProps = {
 const Nav = ({ favoriteDogs, favoriteDialogRef }: NavProps) => {
   const { data: sessionData } = useSession();
   return (
-    <div className="fixed top-0 z-50 flex h-fit w-screen items-center justify-end gap-8 border-black border-opacity-[50%] border-b-[2px] py-2 bg-purple-600 text-white">
+    <div className="fixed top-0 z-50 flex h-fit w-screen items-center justify-end gap-8 border-black border-opacity-[50%] border-b-[2px] py-2 bg-purple text-white">
       {favoriteDogs.length > 0 && (
         <FaHeart
           className="absolute left-3 top-2 z-50 cursor-pointer text-[1.6rem] text-red-400"

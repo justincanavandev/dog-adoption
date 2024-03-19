@@ -17,6 +17,10 @@ export default {
         xl: "1280px",
         "2xl": "1536px",
       },
+      colors: {
+        gray: "rgb(209 213 219)",
+        purple: "rgb(147 51 234)"
+      }
     },
   },
   plugins: [],

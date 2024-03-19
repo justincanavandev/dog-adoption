@@ -109,7 +109,7 @@ const SearchInputs = () => {
     <div className="flex flex-col items-center pt-12">
       <h1 className="mb-2 pl-4 text-[1.5rem]">Search for Dogs!</h1>
 
-      <dialog ref={breedDialogRef} className="modal backdrop:backdrop-blur-sm">
+      <dialog ref={breedDialogRef} className="modal backdrop:backdrop-blur-sm rounded-md bg-gray">
         <Dialog title="Breed not found!" Component={<BreedDialog />} />
       </dialog>
 
@@ -190,7 +190,7 @@ const SearchInputs = () => {
             >
               Search
             </button> */}
-            <Button text="Search" action={handleSearch} />
+            <Button text="Search" asyncAction={handleSearch} />
             {/* <button
               className="w-24 border-2 border-black"
               onClick={clearSearchParams}

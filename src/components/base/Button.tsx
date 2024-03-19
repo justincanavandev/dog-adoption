@@ -9,7 +9,7 @@ const Button = ({ text, action, asyncAction, disabled }: ButtonProps) => {
   return (
     <button
       onClick={action ? action : asyncAction}
-      className="w-24 rounded-sm border-2 border-black bg-purple-600 text-white"
+      className="w-24 rounded-sm border-2 border-black bg-purple text-white"
       disabled={disabled ? disabled : false}
     >
       {text}

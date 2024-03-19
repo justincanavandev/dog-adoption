@@ -113,7 +113,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Layout>
         {/* <AuthContext.Provider value={{ accessToken, API_BASE_URL }}> */}
-          <main className={`${cuprum.className} bg-gray-300 min-h-screen`}>
+          <main className={`${cuprum.className} bg-gray min-h-screen`}>
             {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
             <Component {...pageProps} />
           </main>

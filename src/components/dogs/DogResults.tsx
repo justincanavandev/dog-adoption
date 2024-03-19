@@ -149,7 +149,7 @@ const DogResults = () => {
         <h2 className="w-full text-center text-[1.5rem]"> Find Your Match!</h2>
         <dialog
           ref={favoriteDialogRef}
-          className="modal backdrop:backdrop-blur-sm"
+          className="modal backdrop:backdrop-blur-sm bg-gray"
         >
           <Dialog
             title="Favorite Dogs!"
