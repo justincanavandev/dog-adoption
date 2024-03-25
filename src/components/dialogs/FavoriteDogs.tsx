@@ -23,7 +23,7 @@ const FavoriteDogs = ({ remove, add }: FavoriteDogsType) => {
           {favoriteDogs.map((dog) => (
             <div
               key={dog.id}
-              className={`relative flex h-auto max-w-[300px] flex-col items-center justify-between overflow-hidden rounded-md xs:border xs:border-gray-500`}
+              className={`relative flex h-auto max-w-[300px] bg-lightGray flex-col items-center justify-between overflow-hidden rounded-md xs:border xs:border-gray-500`}
             >
               {!isDogsLoading || !isFetchingNextPage ? (
                 <>
@@ -37,7 +37,7 @@ const FavoriteDogs = ({ remove, add }: FavoriteDogsType) => {
                       maxWidth: "270px",
                     }}
                     quality={100}
-                    className="rounded-md"
+                    className="rounded-t-md"
                     src={dog.photos[0] ? dog.photos[0].medium : imgNotFound}
                   ></Image>
 

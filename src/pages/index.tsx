@@ -14,7 +14,6 @@ export default function Home() {
 
   useEffect(()=>{
     void router.push('/dogs')
-    // console.log('hello')
   }, [router])
 
   return (

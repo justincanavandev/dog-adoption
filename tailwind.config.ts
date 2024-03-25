@@ -19,7 +19,9 @@ export default {
       },
       colors: {
         gray: "rgb(209 213 219)",
-        purple: "rgb(147 51 234)"
+        purple: "rgb(147 51 234)",
+        // lightGray: "rgb(214, 218, 223)",
+        lightGray: "rgb(219, 222, 227)"
       }
     },
   },
