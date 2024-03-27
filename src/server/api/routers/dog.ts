@@ -142,7 +142,6 @@ export const dogRouter = createTRPCRouter({
       const { limit, cursor } = input;
 
       try {
-        console.log("input", input);
         const params: DogParams = {
           take: limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
@@ -153,7 +152,6 @@ export const dogRouter = createTRPCRouter({
           },
         };
         const { where } = params;
-        console.log("input", input);
 
         if (input.age.length > 0 && isAgeValid(input.age)) {
           where.age = input.age;

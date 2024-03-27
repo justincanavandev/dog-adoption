@@ -145,14 +145,15 @@ const DogResults = () => {
           onClick={() => favoriteDialogRef.current?.showModal()}
         ></FaHeart>
       )} */}
-      <div className="relative mx-4 mt-4 flex flex-wrap justify-center gap-4">
+      <div className="relative mx-4 mt-4 flex flex-wrap justify-center gap-4 ">
+        <div className="xl:max-w-[1300px] flex flex-wrap justify-center gap-4">
         <h2 className="w-full text-center text-[1.5rem]"> Find Your Match!</h2>
         <dialog
           ref={favoriteDialogRef}
-          className="modal backdrop:backdrop-blur-sm bg-gray"
+          className="modal backdrop:backdrop-blur-sm rounded-md bg-gray"
         >
           <Dialog
-            title="Favorite Dogs!"
+            title="Your Favorite Dogs!"
             Component={
               <FavoriteDogs
                 remove={removeFromFavorites}
@@ -172,7 +173,7 @@ const DogResults = () => {
           dogsToShow?.map((dog) => (
             <div
               key={dog.id}
-              className={`relative flex h-auto w-[240px] flex-col items-center justify-between overflow-hidden rounded-md border-2 border-black`}
+              className={`relative flex h-auto w-[240px] flex-col items-center bg-lightGray justify-between overflow-hidden rounded-md border-2 border-black`}
             >
               {!isDogsLoading || !isFetchingNextPage ? (
                 <>
@@ -189,7 +190,7 @@ const DogResults = () => {
                     }}
                     priority={true}
                     quality={100}
-                    className="rounded-lg"
+                    className="rounded-t-md"
                     src={
                       dog.photos[0]
                         ? isHostnameValid(dog.photos[0].medium)
@@ -283,6 +284,7 @@ const DogResults = () => {
             />
           </div>
         )}
+        </div>
       </div>
     </>
   );
