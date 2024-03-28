@@ -30,6 +30,9 @@ type CapsFiltering = {
 export type DogParams = {
   take: number;
   cursor?: { id: number } | undefined;
+  orderBy: {
+    breed: "asc"
+  }
   where: {
     address?: {
       state?: State;
