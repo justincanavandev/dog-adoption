@@ -24,6 +24,7 @@ const SearchInputs = () => {
     setCurrentPage,
     searchLimit,
     setSearchLimit,
+    clearSearchParams
   } = useContext(DogContext);
 
   const { refetch: refetchAllBreeds } = api.dog.getAllBreeds.useQuery(void 0, {
@@ -32,14 +33,6 @@ const SearchInputs = () => {
   const breedDialogRef: MutableRefObject<HTMLDialogElement | null> =
     useRef(null);
   const [breedDuplicates, setBreedDuplicates] = useState<string[]>([]);
-
-  const clearSearchParams = () => {
-    setAgeSearch("Age");
-    setStateSearch("State");
-    setCitySearch("");
-    setZipSearch("");
-    setBreedSearch("");
-  };
 
   const handleSearch = async () => {
     setCurrentPage(0);
@@ -68,7 +61,7 @@ const SearchInputs = () => {
         }
       }
     } else {
-      clearSearchParams();
+      // clearSearchParams();
     }
   };
 
@@ -109,7 +102,10 @@ const SearchInputs = () => {
     <div className="flex flex-col items-center pt-12">
       <h1 className="mb-2 pl-4 text-[1.5rem]">Search for Dogs!</h1>
 
-      <dialog ref={breedDialogRef} className="modal backdrop:backdrop-blur-sm rounded-md bg-gray">
+      <dialog
+        ref={breedDialogRef}
+        className="modal rounded-md bg-gray backdrop:backdrop-blur-sm"
+      >
         <Dialog title="Breed not found!" Component={<BreedDialog />} />
       </dialog>
 

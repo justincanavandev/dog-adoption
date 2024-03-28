@@ -6,7 +6,7 @@ import type {
   SearchTerms,
   // DogData,
 } from "~/types/dog-types";
-import type { SetStateAction, MutableRefObject} from "react";
+import type { SetStateAction, MutableRefObject } from "react";
 import type { Session } from "next-auth";
 import type { UserWithRelations } from "~/types/dog-types";
 import type {
@@ -37,7 +37,7 @@ export type DogContextType = {
   favDogIds: number[];
   currentPage: number;
   setCurrentPage: React.Dispatch<SetStateAction<number>>;
-  
+
   isDogsLoading: boolean;
   isDogsSuccess: boolean;
   isDogsError: boolean;
@@ -45,9 +45,10 @@ export type DogContextType = {
   isFetchingNextPage: boolean;
   searchTerms: SearchTerms;
   setSearchTerms: React.Dispatch<SetStateAction<SearchTerms>>;
-  searchLimit: number
-  setSearchLimit: React.Dispatch<SetStateAction<number>>;
-  favoriteDialogRef: MutableRefObject<HTMLDialogElement | null>
+  searchLimit: number | "Per Page";
+  setSearchLimit: React.Dispatch<SetStateAction<number | "Per Page">>;
+  favoriteDialogRef: MutableRefObject<HTMLDialogElement | null>;
+  clearSearchParams: () => void;
   dogData:
     | InfiniteData<
         | {
@@ -58,33 +59,32 @@ export type DogContextType = {
         | undefined
       >
     | undefined;
-    // refetchDogs: <TPageData>(
-    //   options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
-    // ) => Promise<
-    //   QueryObserverResult<
-    //     InfiniteData<
-    //       | {
-    //           dogs: DogWithRelations[];
-    //           nextCursor: number | undefined;
-    //           totalDogs: number;
-    //         }
-    //       | undefined
-    //     >,
-    //     TRPCClientErrorLike<TRPCErrorShape>
-    //   >
-    // >;
-    fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<
-      InfiniteQueryObserverResult<
-        | {
-            dogs: DogWithRelations[];
-            nextCursor: number | undefined;
-            totalDogs: number;
-          }
-        | undefined,
-        TRPCClientErrorLike<TRPCErrorShape>
-      >
-    >;
-
+  // refetchDogs: <TPageData>(
+  //   options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
+  // ) => Promise<
+  //   QueryObserverResult<
+  //     InfiniteData<
+  //       | {
+  //           dogs: DogWithRelations[];
+  //           nextCursor: number | undefined;
+  //           totalDogs: number;
+  //         }
+  //       | undefined
+  //     >,
+  //     TRPCClientErrorLike<TRPCErrorShape>
+  //   >
+  // >;
+  fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<
+    InfiniteQueryObserverResult<
+      | {
+          dogs: DogWithRelations[];
+          nextCursor: number | undefined;
+          totalDogs: number;
+        }
+      | undefined,
+      TRPCClientErrorLike<TRPCErrorShape>
+    >
+  >;
 };
 
 export const DogContext = createContext({} as DogContextType);

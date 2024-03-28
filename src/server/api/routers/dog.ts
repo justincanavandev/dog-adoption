@@ -134,7 +134,7 @@ export const dogRouter = createTRPCRouter({
           z.literal(""),
         ]),
         breed: z.string(),
-        limit: z.number(),
+        limit: z.union([z.number(), z.literal("Per Page")]),
         cursor: z.number().nullish(),
       }),
     )
@@ -142,9 +142,9 @@ export const dogRouter = createTRPCRouter({
       const { limit, cursor } = input;
 
       try {
-        console.log("input", input);
+  
         const params: DogParams = {
-          take: limit + 1,
+          take: limit === "Per Page" ? 6 : limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
           where: {},
           include: {
@@ -196,7 +196,9 @@ export const dogRouter = createTRPCRouter({
         const dogs = await ctx.db.dog.findMany(params);
 
         let nextCursor: typeof cursor | undefined = undefined;
-        if (dogs.length > limit) {
+        const limitOrPerPage = limit === "Per Page" ? 5 : limit
+
+        if (dogs.length > limitOrPerPage) {
           const nextItem = dogs.pop();
           nextCursor = nextItem?.id;
         }

@@ -113,11 +113,20 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Layout>
         {/* <AuthContext.Provider value={{ accessToken, API_BASE_URL }}> */}
-          <main className={`${cuprum.className} bg-gray min-h-screen`}>
-            {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
-            <Component {...pageProps} />
-          </main>
-          <Toaster position="top-center" />
+        <main className={`${cuprum.className} min-h-screen bg-gray`}>
+          {/* <button onClick={() => addAllDogs()}>Add All Dogs</button> */}
+          <Component {...pageProps} />
+          <Toaster
+            toastOptions={{
+              // style: {
+              //   fontSize: "1.2rem"
+              // },
+              className: "bg-lightGray text-[1.2rem]"
+            }}
+            position="top-center"
+          />
+        </main>
+
         {/* </AuthContext.Provider> */}
       </Layout>
     </SessionProvider>

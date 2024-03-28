@@ -46,7 +46,7 @@ export type DogParams = {
 };
 
 export type SearchTerms = {
-  limit: number
+  limit: number | "Per Page"
   age: string;
   state: string;
   city: string;

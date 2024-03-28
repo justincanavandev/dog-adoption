@@ -19,16 +19,23 @@ type DogsProps = {
   favoriteDialogRef: MutableRefObject<HTMLDialogElement | null>;
 };
 
-const Dogs = ({ favoriteDogs, sessionData, currentUser, favoriteDialogRef }: DogsProps) => {
+const Dogs = ({
+  favoriteDogs,
+  sessionData,
+  currentUser,
+  favoriteDialogRef,
+}: DogsProps) => {
   const [ageSearch, setAgeSearch] = useState<Age | "Age">("Age");
   const [stateSearch, setStateSearch] = useState<State | "State">("State");
   const [citySearch, setCitySearch] = useState<string>("");
   const [zipSearch, setZipSearch] = useState<string>("");
   const [breedSearch, setBreedSearch] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [searchLimit, setSearchLimit] = useState(5);
+  const [searchLimit, setSearchLimit] = useState<number | "Per Page">(
+    "Per Page",
+  );
   const [searchTerms, setSearchTerms] = useState<SearchTerms>({
-    limit: 5,
+    limit: searchLimit,
     age: ageSearch,
     state: stateSearch,
     city: citySearch,
@@ -37,6 +44,14 @@ const Dogs = ({ favoriteDogs, sessionData, currentUser, favoriteDialogRef }: Dog
   });
 
   const favDogIds = currentUser?.favorites ? currentUser.favorites.dogIds : [];
+  const clearSearchParams = () => {
+    setAgeSearch("Age");
+    setStateSearch("State");
+    setCitySearch("");
+    setZipSearch("");
+    setBreedSearch("");
+    setSearchLimit("Per Page");
+  };
 
   const {
     data: dogData,
@@ -57,6 +72,9 @@ const Dogs = ({ favoriteDogs, sessionData, currentUser, favoriteDialogRef }: Dog
     {
       getNextPageParam: (prevPage) => prevPage?.nextCursor,
       staleTime: 60 * 5000,
+      onSuccess: () => {
+        clearSearchParams();
+      },
     },
   );
 
@@ -89,7 +107,8 @@ const Dogs = ({ favoriteDogs, sessionData, currentUser, favoriteDialogRef }: Dog
         searchLimit,
         setSearchLimit,
         isFetchingNextPage,
-        favoriteDialogRef
+        favoriteDialogRef,
+        clearSearchParams
       }}
     >
       <SearchInputs />
