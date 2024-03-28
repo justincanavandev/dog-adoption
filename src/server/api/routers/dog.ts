@@ -146,6 +146,9 @@ export const dogRouter = createTRPCRouter({
         const params: DogParams = {
           take: limit === "Per Page" ? 6 : limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
+          orderBy: {
+            breed: "asc"
+          },
           where: {},
           include: {
             photos: true,
