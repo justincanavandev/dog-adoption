@@ -1,5 +1,3 @@
-// import { IoMdCloseCircle } from "react-icons/io";
-
 type DialogProps = {
   title: string;
   Component: React.JSX.Element;

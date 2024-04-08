@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { removeDuplicates } from "~/utils/helpers";
-
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -142,12 +141,11 @@ export const dogRouter = createTRPCRouter({
       const { limit, cursor } = input;
 
       try {
-  
         const params: DogParams = {
           take: limit === "Per Page" ? 6 : limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
           orderBy: {
-            breed: "asc"
+            breed: "asc",
           },
           where: {},
           include: {
@@ -156,7 +154,6 @@ export const dogRouter = createTRPCRouter({
           },
         };
         const { where } = params;
-        console.log("input", input);
 
         if (input.age.length > 0 && isAgeValid(input.age)) {
           where.age = input.age;
@@ -275,37 +272,5 @@ export const dogRouter = createTRPCRouter({
       } catch (e) {
         console.error("Unable to fetch dogs", e);
       }
-    }),
-  getPaginated: protectedProcedure
-    .input(
-      z.object({
-        limit: z.number(),
-        cursor: z.number().nullish(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { limit, cursor } = input;
-
-      const totalDogs = await ctx.db.dog.count();
-
-      const dogs = await ctx.db.dog.findMany({
-        take: limit + 1,
-        cursor: cursor ? { id: cursor } : undefined,
-        include: {
-          photos: true,
-          address: true,
-        },
-      });
-
-      let nextCursor: typeof cursor | undefined = undefined;
-      if (dogs.length > limit) {
-        const nextItem = dogs.pop();
-        nextCursor = nextItem?.id;
-      }
-      return {
-        dogs,
-        nextCursor,
-        totalDogs,
-      };
     }),
 });

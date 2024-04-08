@@ -224,21 +224,25 @@ const DogResults = () => {
                   <Spinner />
                 )}
                 <div className="my-2 flex w-full flex-col items-center gap-1">
-                  <div className="absolute right-2 top-2 cursor-pointer rounded-full bg-white p-2 text-[1.3rem] text-red-500 opacity-75 sm:text-[1.4rem] ">
+                  <div className="absolute right-2 top-2 cursor-pointer rounded-full duration-200 hover:scale-110 bg-white p-2 text-[1.3rem] text-red-500 opacity-75 sm:text-[1.4rem] ">
                     {favDogIds.includes(dog.id) ? (
                       <FaHeart
                         onClick={() => {
                           sessionData
                             ? removeFromFavorites(dog)
-                            : toast.error("Must be logged in for this feature!");
+                            : toast.error(
+                                "Must be logged in for this feature!",
+                              );
                         }}
                       />
                     ) : (
-                      <FaRegHeart
+                      <FaRegHeart 
                         onClick={() => {
                           sessionData
                             ? handleAddToFavorites(dog)
-                            : toast.error("Must be logged in for this feature!");
+                            : toast.error(
+                                "Must be logged in for this feature!",
+                              );
                         }}
                       />
                     )}
